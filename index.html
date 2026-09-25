@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<!--
+  Declaración del tipo de documento (DOCTYPE).
+  Le dice al navegador "este archivo usa el estándar HTML5".
+  SIEMPRE debe ser la primerísima línea del archivo, sin nada antes.
+-->
+<html lang="es">
+<!--
+  Esta es la etiqueta raíz: TODO lo demás vive dentro de ella.
+  El atributo lang="es" le indica al navegador, a los lectores de pantalla
+  (para personas con discapacidad visual) y a Google que el contenido
+  está en español. Ayuda con accesibilidad y con el buscador.
+-->
+
+<head>
+    <!--
+      Esta sección guarda información que el navegador necesita para procesar
+      la página, pero que el usuario NO ve dibujada en la pantalla
+      (con la excepción del título de la pestaña).
+    -->
+
+    <meta charset="UTF-8">
+    <!--
+      Define la codificación de caracteres como UTF-8.
+      Es CLAVE para que se vean bien las tildes (á, é, í, ó, ú), la ñ,
+      y símbolos como ©. Sin esta línea, esos caracteres podrían
+      mostrarse como símbolos raros o cuadrados.
+    -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--
+      Esta línea es esencial para que la página se vea bien en celulares.
+      - width=device-width  -> el ancho de la página se ajusta al ancho real del dispositivo.
+      - initial-scale=1.0   -> empieza sin zoom aplicado (100%).
+      Sin esto, en el celular la página se vería "encogida", como una
+      versión de escritorio en miniatura.
+    -->
+
+    <title>Infancia coleccionable</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <!--
+      El texto que aparece en la pestaña del navegador y en los resultados
+      de Google. Es el "nombre oficial" de tu sitio.
+    -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!--
+      Estas 3 líneas cargan nuestras 2 fuentes desde Google Fonts:
+      - "Baloo 2": una tipografía redondeada y con personalidad, para
+        los TÍTULOS. Se siente como una etiqueta de producto/sticker,
+        justo el aire "nostálgico/kiosco" que buscamos.
+      - "Inter": una tipografía bien legible y neutra, para el TEXTO
+        normal (párrafos, botones, etc.). Los títulos pueden ser
+        divertidos, pero el texto de lectura tiene que ser cómodo.
+
+      Las dos líneas "preconnect" son una optimización de velocidad:
+      le avisan al navegador "en un segundo vas a necesitar conectarte
+      a estos servidores", así arranca esa conexión ANTES de que
+      lleguemos a la línea que realmente pide las fuentes. Ahorra
+      unos milisegundos, pero en celulares con internet lenta se nota.
+    -->
+
+    <link rel="stylesheet" href="css/style.css?v=20260925-5">
+    <!--
+      Conecta este HTML con nuestra hoja de estilos externa.
+      - rel="stylesheet" -> le dice al navegador "esto es CSS".
+      - href="css/style.css" -> la ruta donde vive ese archivo.
+
+      ¿Por qué el CSS va en un archivo aparte y no mezclado aquí?
+      Porque el HTML describe la ESTRUCTURA ("qué elementos hay")
+      y el CSS describe el DISEÑO ("cómo se ven"). Separarlos hace que
+      el proyecto sea mucho más fácil de leer, ordenar y modificar
+      a futuro (por ejemplo, podrás rediseñar toda la página sin tocar
+      ni una línea de esta estructura).
+
+      IMPORTANTE: este link va DESPUÉS de las fuentes de Google, para
+      que cuando nuestro CSS pida "font-family: 'Baloo 2'", esa fuente
+      ya esté en camino de cargarse.
+    -->
+</head>
+
+<body>
+    <!--
+      Aquí dentro va TODO lo que el usuario SÍ ve e interactúa en
+      pantalla: textos, botones, imágenes, etc. Solo puede haber una
+      etiqueta de este tipo por página.
+    -->
+
+    <header>
+        <!--
+          Esta es una etiqueta SEMÁNTICA: no es una caja cualquiera,
+          le comunica al navegador (y a los buscadores) "esto es el
+          encabezado de la página". Aquí suele ir el logo o el nombre del sitio.
+        -->
+
+        <a href="perfil.html" id="link-mi-coleccion" class="oculto">Mi perfil</a>
+        <!--
+          Movido acá desde "grupo-acciones": ahora funciona como un
+          acceso directo de "perfil/muro", fijo arriba a la derecha del
+          header, en vez de competir como botón de ancho completo con
+          "A comprar". Sigue siendo el mismo elemento (mismo id), así
+          que script.js no necesita ningún cambio: sigue mostrándolo u
+          ocultándolo con la clase "oculto" exactamente igual que antes.
+        -->
+
+        <h1><span>Infancia</span> <span>coleccionable</span></h1>
+        <!--
+          Este es el título más importante de la página.
+          Regla de oro: solo debe existir un título de este nivel por página
+          completa, porque representa el título principal (también ayuda
+          al SEO, es decir, a que Google entienda de qué trata tu sitio).
+        -->
+    </header>
+
+    <main>
+        <!--
+          Esta etiqueta representa el CONTENIDO PRINCIPAL de la página: lo
+          más importante que el usuario vino a ver. También debe haber
+          solo una de estas por página.
+        -->
+
+        <section id="hero">
+            <!--
+              Esta etiqueta agrupa una parte del contenido que está
+              relacionada entre sí (como un "bloque temático").
+
+              Le dimos id="hero" porque en diseño web se llama "hero"
+              (héroe/protagonista) a la sección destacada y principal
+              de una página, la primera que ves al entrar.
+
+              Un "id" es un identificador ÚNICO: no puede repetirse en
+              toda la página. Nos servirá más adelante para apuntarle
+              estilos específicos desde el CSS y comportamientos desde
+              el JavaScript.
+            -->
+
+            <div class="tarjeta-saldo">
+                <!--
+                  Agrupamos acá todo lo relacionado con "plata": el
+                  saludo, el botón de regalo diario y el contador de
+                  monedas. Antes estaban sueltos uno debajo del otro,
+                  al mismo nivel que los botones de navegación, y por
+                  eso se sentía todo "revuelto". Ahora viven juntos
+                  dentro de una tarjeta con su propio fondo, así el ojo
+                  entiende de un vistazo "esto es un solo bloque".
+                -->
+                <p id="estado-usuario"></p>
+                <!--
+                  Este párrafo está vacío a propósito. Nuestro JavaScript lo
+                  va a llenar dinámicamente:
+                  - Si NO hay nadie logeado, lo dejamos vacío (o con un
+                    mensaje de bienvenida genérico).
+                  - Si SÍ hay alguien logeado, aquí escribiremos algo como
+                    "Hola, María" usando el nombre que nos da Google.
+
+                  A esto se le llama "contenido dinámico": el HTML no lo
+                  escribe, lo escribe el JavaScript en tiempo real según lo
+                  que esté pasando.
+                -->
+
+                <!--
+                  Botón ilustrado del regalo diario: una mano ofreciendo
+                  monedas. Es puramente decorativo/visual, así que le
+                  ponemos aria-hidden="true" al SVG de adentro (para que
+                  los lectores de pantalla no lo lean) y dejamos el texto
+                  accesible en el aria-label del botón. Al apretarlo hace
+                  EXACTAMENTE lo mismo que "Agarrar dinero diario": ambos
+                  botones llaman a la misma función agarrarDineroDiario()
+                  desde script.js, así que cobran el mismo dinero.
+                -->
+                <button id="btn-regalo-diario" class="oculto btn-regalo-diario" type="button" aria-label="Reclamar dinero diario">
+                    <svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                        <!-- Sombra ovalada bajo la mano, para dar sensación de apoyo -->
+                        <ellipse cx="100" cy="148" rx="70" ry="8" fill="#3B2E20" opacity="0.12"/>
+
+                        <!-- Antebrazo -->
+                        <path d="M60 160 L60 118 Q60 100 82 96 L146 92 Q166 91 166 112 L166 160 Z" fill="#E8B48A"/>
+
+                        <!-- Palma de la mano, abierta hacia arriba -->
+                        <path d="M40 118
+                                 Q34 84 62 70
+                                 Q80 61 96 66
+                                 Q104 50 122 54
+                                 Q138 57 138 74
+                                 Q154 72 160 88
+                                 Q166 104 154 116
+                                 Q150 132 128 136
+                                 L64 136
+                                 Q42 134 40 118 Z"
+                              fill="#F0C39B" stroke="#3B2E20" stroke-width="3" stroke-linejoin="round"/>
+
+                        <!-- Líneas de los dedos, apenas insinuadas -->
+                        <path d="M70 78 Q64 64 70 50" fill="none" stroke="#3B2E20" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+                        <path d="M96 66 Q92 50 98 36" fill="none" stroke="#3B2E20" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+                        <path d="M122 54 Q120 38 128 26" fill="none" stroke="#3B2E20" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+                        <path d="M138 74 Q142 60 154 52" fill="none" stroke="#3B2E20" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+
+                        <!-- Pila de monedas doradas sobre la palma -->
+                        <circle cx="88" cy="104" r="19" fill="#E6A93B" stroke="#3B2E20" stroke-width="3"/>
+                        <circle cx="88" cy="104" r="11" fill="none" stroke="#C88A22" stroke-width="2"/>
+                        <circle cx="118" cy="98" r="19" fill="#E6A93B" stroke="#3B2E20" stroke-width="3"/>
+                        <circle cx="118" cy="98" r="11" fill="none" stroke="#C88A22" stroke-width="2"/>
+                        <circle cx="103" cy="80" r="19" fill="#F3C766" stroke="#3B2E20" stroke-width="3"/>
+                        <circle cx="103" cy="80" r="11" fill="none" stroke="#C88A22" stroke-width="2"/>
+                        <text x="103" y="86" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="800" fill="#3B2E20">$</text>
+
+                        <!-- Brillitos alrededor, para dar sensación de "regalo" -->
+                        <path d="M150 40 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 l10 -4 Z" fill="#F3C766"/>
+                        <path d="M46 56 l3 7 l7 3 l-7 3 l-3 7 l-3 -7 l-7 -3 l7 -3 Z" fill="#F3C766"/>
+                    </svg>
+                </button>
+                <button id="btn-dinero-diario" class="oculto" type="button">Reclamar dinero diario</button>
+                <p id="estado-dinero-diario" class="texto-ayuda"></p>
+
+                <p id="monedas-usuario"></p>
+                <!--
+                  Nuevo párrafo, también vacío a propósito. Acá vamos a
+                  mostrar cuántas monedas virtuales tiene el usuario, algo
+                  como "Monedas: 500". Solo va a tener contenido cuando haya
+                  alguien logeado, porque solo ahí tiene sentido hablar de
+                  "sus" monedas.
+                -->
+            </div>
+
+            <div class="grupo-acciones">
+                <!--
+                  Las dos acciones principales de navegación (ir a la
+                  colección y avanzar a comprar) ahora viven juntas en
+                  este grupo, con el mismo tamaño y alineación entre
+                  sí. Antes estaban separadas por el panel de recarga
+                  de prueba metido en el medio, lo que rompía la
+                  secuencia visual.
+                -->
+                <button id="btn-accion-principal">Iniciar sesión con Google</button>
+                <!--
+                  Este es el botón central de tu idea original. Le cambiamos
+                  el id de "btn-coleccionar" a "btn-accion-principal" porque
+                  ahora este mismo botón cumple DOS roles distintos según el
+                  momento (esto se llama "estado" en programación):
+
+                  1) Usuario NO logeado -> el botón dice "Iniciar sesión con
+                     Google" y al hacer click abre la ventana de Google para
+                     iniciar sesión.
+                  2) Usuario SÍ logeado -> el botón va a decir "A comprar" y
+                     al hacer click te llevará a la escena de la mamá y a las
+                     opciones de compra (eso lo construimos en el próximo paso).
+
+                  El texto "Iniciar sesión con Google" que ves ahora es solo
+                  el valor por defecto, antes de que el JavaScript revise si
+                  ya había una sesión activa. En cuanto la página cargue,
+                  nuestro script.js va a decidir cuál texto mostrar de verdad.
+
+                  Usamos la etiqueta de botón nativa (y no una simple caja de
+                  texto) porque el navegador YA SABE que esto es interactivo:
+                  se puede presionar, navegar con teclado (Tab + Enter), los
+                  lectores de pantalla lo anuncian como botón, etc. Esa
+                  accesibilidad se pierde si simulamos un botón con otro tipo
+                  de elemento.
+                -->
+            </div>
+
+            <div id="panel-recarga-root" class="oculto panel-recarga-root" aria-label="Recargar monedas para pruebas">
+                <label for="input-recarga-monedas">Recargar monedas de prueba</label>
+                <div class="fila-recarga-root">
+                    <input type="number" id="input-recarga-monedas" min="1" step="1" value="500">
+                    <button type="button" id="btn-recargar-monedas">Sumar monedas</button>
+                </div>
+                <p id="estado-recarga-monedas" class="texto-ayuda"></p>
+            </div>
+            <!--
+              NUEVO: link al panel de administración, para poder
+              agregar paquetes/productos nuevos sin tocar código.
+
+              También arranca oculto, pero por una razón distinta a
+              "link-mi-coleccion": acá no alcanza con "¿hay alguien
+              logeado?" — hace falta además "¿ES la cuenta admin?".
+              Nuestro script.js va a comparar el email de quien inició
+              sesión contra tu email de admin, y SOLO en ese caso le
+              va a sacar la clase "oculto" a este link. Para cualquier
+              otro usuario logeado, este link se queda invisible
+              siempre.
+
+              OJO: esto es solo para la EXPERIENCIA del sitio (ocultar
+              un botón que no le sirve a nadie más). La seguridad
+              REAL, que impide que alguien escriba productos aunque
+              conozca la URL de admin.html a mano, la ponemos en las
+              reglas de Firestore (te paso ese código más abajo).
+            -->
+
+            <button id="btn-cerrar-sesion" class="oculto" type="button">Cerrar sesión</button>
+            <!--
+              Este botón queda deliberadamente separado y con menos
+              peso visual que los de arriba (ver CSS): es una acción
+              secundaria, la usás poco, así que no debe competir con
+              "Mi colección" y "A comprar" por la atención del ojo.
+            -->
+        </section>
+
+        <section id="escena-recompensa" class="oculto">
+            <!--
+              Esta sección es la "escena" de las 2 imágenes que se
+              muestra SOLO cuando al usuario le toca el regalo diario.
+
+              La clase "oculto" (definida en nuestro CSS) hace que esta
+              sección no se vea por defecto. Nuestro JavaScript le va a
+              QUITAR esa clase justo en el momento en que corresponda
+              mostrarla, y se la va a volver a poner cuando termine.
+
+              Este patrón ("tener el elemento ya armado en el HTML, y
+              usar JavaScript solo para mostrarlo/ocultarlo") es más
+              simple y prolijo que crear y destruir elementos desde
+              cero con JavaScript cada vez.
+            -->
+
+            <img id="escena-imagen-1" src="img/escena-recompensa-1-mama.png"
+                 alt="Una mamá entregándole monedas a su hijo">
+            <!--
+              La primera imagen de la escena: se ve apenas se abre la
+              escena (por eso NO tiene la clase "oculto" puesta acá).
+            -->
+
+            <img id="escena-imagen-2" src="img/escena-recompensa-2-pensando.png"
+                 alt="El joven pensando qué comprar" class="oculto">
+            <!--
+              La segunda imagen: empieza OCULTA. El JavaScript la va a
+              mostrar (y va a ocultar la primera) después de unos
+              segundos, generando el efecto de "secuencia" entre las
+              dos imágenes.
+
+              El atributo "alt" en ambas imágenes es un texto
+              alternativo: lo usan los lectores de pantalla para
+              describir la imagen a personas con discapacidad visual,
+              y también se muestra si la imagen no llega a cargar.
+              SIEMPRE es buena práctica incluirlo en toda etiqueta img.
+            -->
+        </section>
+
+        <div id="modal-lugares" class="modal-lugares oculto" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-lugares">
+            <div class="modal-lugares-contenido">
+                <button id="btn-cerrar-modal-lugares" class="btn-cerrar-modal" type="button" aria-label="Cerrar">×</button>
+                <h2 id="titulo-modal-lugares">Elige dónde comprar</h2>
+                <p id="estado-modal-lugares" class="texto-ayuda">Cargando lugares...</p>
+                <div id="grilla-lugares-compra" class="grilla-lugares-compra"></div>
+                <a href="admin.html" id="link-admin-modal" class="oculto link-admin-modal">Agregar lugares de compra</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <!--
+          Este es el pie de página. Normalmente contiene cosas como
+          derechos de autor, enlaces legales, redes sociales, contacto,
+          etc. Por ahora lo dejamos simple.
+        -->
+
+        <p>&copy; 2026 Infancia coleccionable</p>
+
+        <section id="info-root" class="oculto" aria-label="Información técnica para continuar el proyecto">
+            <h2>Notas root para seguir trabajando</h2>
+            <p>Esta información aparece solo para la cuenta administradora. Sirve como mapa rápido para futuras mejoras del sitio.</p>
+            <ul>
+                <li><strong>Firebase Auth:</strong> login con Google. La cuenta root/admin está definida en JavaScript como <code>EMAIL_ADMIN</code>.</li>
+                <li><strong>Firestore:</strong> colección <code>usuarios</code> por <code>uid</code>, con <code>monedas</code>, <code>ultimoReclamo</code> y <code>coleccionables</code>.</li>
+                <li><strong>Firestore:</strong> colección <code>productos</code>, con <code>nombre</code>, <code>imagen</code> y array <code>opciones</code> con <code>id</code>, <code>nombre</code> y <code>precio</code>.</li>
+                <li><strong>Cloudinary:</strong> el admin sube imágenes de productos desde <code>admin.html</code>; la URL pública queda guardada en <code>productos.imagen</code>.</li>
+                <li><strong>Páginas clave:</strong> <code>index.html</code> maneja sesión y monedas, <code>tienda.html</code> lista productos, <code>producto.html</code> compra opciones, <code>coleccion.html</code> muestra la colección y <code>admin.html</code> administra productos.</li>
+                <li><strong>Reglas importantes:</strong> la seguridad real debe vivir en reglas de Firestore; ocultar botones en el frontend solo mejora la experiencia, no protege datos.</li>
+                <li><strong>Para IA futura:</strong> mantener sincronizado <code>EMAIL_ADMIN</code> entre <code>js/script.js</code> y <code>js/admin.js</code>, y evitar guardar productos sin imagen.</li>
+            </ul>
+        </section>
+        <!--
+          &copy; es una "entidad HTML" (un código especial) que el
+          navegador convierte en el símbolo ©. Existen muchas entidades
+          parecidas para escribir símbolos que no están en el teclado
+          normal (por ejemplo &nbsp; para un espacio "duro").
+        -->
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <!--
+      Estas tres líneas cargan el "SDK" (kit de herramientas) de Firebase
+      directamente desde los servidores de Google (esto se llama usar un
+      "CDN": una copia de la librería alojada en internet, sin que
+      tengas que descargar ni instalar nada en tu computadora).
+
+      Primera línea: el núcleo de Firebase (obligatorio siempre).
+      Segunda línea: el módulo de autenticación (login).
+      Tercera línea (NUEVA): el módulo de Firestore, nuestra base de
+      datos en la nube. La vamos a usar para guardar las monedas de cada
+      usuario y la fecha de su último regalo diario.
+      Firebase tiene todavía más módulos (archivos, notificaciones, etc.)
+      que iremos agregando de a uno cuando los necesitemos.
+
+      ¿Por qué dicen "compat" en el nombre?
+      Firebase tiene dos "estilos" de código: uno más moderno (modular)
+      y uno "compat" (compatible con la forma clásica de escribir
+      JavaScript con etiquetas de script simples, sin necesidad de usar
+      "import"). Empezamos con "compat" por ser más fácil de leer para
+      alguien que recién empieza. Más adelante, si querés, podemos
+      migrar al estilo moderno.
+
+      MUY IMPORTANTE: estas líneas van ANTES que nuestro script.js,
+      porque nuestro código va a usar la palabra "firebase" que estas
+      librerías crean. Si el orden fuera al revés, nuestro script
+      fallaría con un error de "firebase no está definido".
+    -->
+
+    <script src="js/script.js?v=20260925-5"></script>
+    <!--
+      Conecta este HTML con nuestro archivo de JavaScript externo.
+
+      Lo colocamos AL FINAL, justo antes de cerrar el cuerpo de la
+      página, a propósito: así el navegador primero termina de dibujar
+      todo el HTML en pantalla, y RECIÉN DESPUÉS carga y ejecuta el
+      JavaScript.
+
+      Esto tiene dos ventajas:
+      1) La página se siente más rápida para quien la visita.
+      2) Evitamos errores del tipo "el script busca el botón pero el
+         botón todavía no existe", porque para cuando el JS se ejecuta,
+         todo el HTML ya está armado.
+    -->
+</body>
+</html>

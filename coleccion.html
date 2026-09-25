@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi inventario - Infancia coleccionable</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Mismas fuentes que index.html: Baloo 2 para títulos, Inter para texto. -->
+
+    <link rel="stylesheet" href="css/style.css?v=20260925-5">
+</head>
+
+<body>
+    <!--
+      Esta es la página PERSONAL de cada usuario: acá va a ver los
+      objetos coleccionables que fue consiguiendo en la tienda.
+
+      Es una página PRIVADA: en teoría, solo debería poder verla
+      alguien que inició sesión. La revisamos y protegemos desde
+      JavaScript, en coleccion.js (más abajo te explico cómo).
+    -->
+
+    <header>
+        <h1>Mi inventario</h1>
+    </header>
+
+    <main>
+        <p id="estado-carga">Cargando tu colección...</p>
+        <!--
+          Mensaje temporal mientras esperamos la respuesta de
+          Firestore. En cuanto sepamos qué mostrar (la lista de
+          coleccionables, o el mensaje de "todavía no tenés nada"),
+          JavaScript va a reemplazar este texto.
+        -->
+
+        <section aria-labelledby="titulo-coleccionables">
+            <h2 id="titulo-coleccionables">Coleccionables</h2>
+            <ul id="lista-coleccionables"></ul>
+        </section>
+
+        <section aria-labelledby="titulo-inventario">
+            <h2 id="titulo-inventario">Objetos</h2>
+            <ul id="lista-inventario"></ul>
+        </section>
+        <!--
+          Lista vacía a propósito. Nuestro coleccion.js la va a llenar
+          dinámicamente con un <li> por cada objeto coleccionable que
+          tenga el usuario, una vez que conectemos la tienda de verdad.
+        -->
+
+        <a href="index.html">Volver al inicio</a>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <!--
+      Cargamos los mismos 3 SDKs de Firebase que en index.html.
+
+      IMPORTANTE: cada página HTML es "independiente" para el
+      navegador. Aunque index.html ya haya cargado Firebase antes, si
+      el usuario entra directamente a coleccion.html (por ejemplo,
+      guardó el link en favoritos), esta página necesita cargar todo
+      de nuevo desde cero. Por eso repetimos estos 3 scripts acá.
+    -->
+
+    <script src="js/coleccion.js?v=20260925-6"></script>
+    <!--
+      Nuestro archivo de lógica específico para ESTA página. No
+      reutilizamos script.js porque esa lógica es la del index (el
+      botón de login, la escena del regalo, etc.), cosas que no
+      existen acá. Cada página HTML tiene su propio archivo .js "a
+      medida", con solo lo que esa página necesita.
+    -->
+</body>
+</html>

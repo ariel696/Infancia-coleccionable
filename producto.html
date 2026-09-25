@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Producto - Colecciones de ayer y hoy</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css?v=20260925-5">
+</head>
+
+<body>
+    <!--
+      Esta es la página de OPCIONES de UN producto cualquiera del
+      catálogo. Ya no es una página "a medida" para Cheetos: ahora es
+      GENÉRICA. Sabe qué producto mostrar leyendo un parámetro en su
+      propia URL, algo como:
+
+        producto.html?id=cheetos-tazos
+        producto.html?id=dragon-ball-z-cartas
+
+      Ese "?id=..." al final de la URL se llama "query string" (o
+      "parámetro de consulta"). Es una forma estándar de pasarle
+      información a una página a través de su propia dirección, sin
+      necesidad de un formulario. Nuestro js/producto.js lo lee con
+      "URLSearchParams", una herramienta que ya trae el navegador.
+
+      Es una página PRIVADA: hace falta estar logeado para comprar
+      con las propias monedas.
+    -->
+
+    <header>
+        <h1 id="titulo-producto">Producto</h1>
+        <!--
+          Antes el título estaba escrito fijo en cada página
+          ("Tazos Pokémon"). Ahora, como esta página sirve para
+          CUALQUIER producto, arranca con un texto genérico y
+          producto.js lo reemplaza por el nombre real apenas sabe
+          cuál es.
+        -->
+    </header>
+
+    <main>
+        <a href="tienda.html" class="link-volver">&larr; Volver a la tienda</a>
+        <a href="admin.html" id="link-editar-lugar" class="link-editar-lugar oculto">Editar este lugar</a>
+
+        <p id="monedas-disponibles">Cargando tus monedas...</p>
+
+        <p class="texto-ayuda">
+            Cada opción cuesta monedas distintas. Toca "Comprar" en la
+            que quieras conseguir para tu colección.
+        </p>
+
+        <div id="grilla-opciones" class="grilla-opciones">
+            <!--
+              Vacía a propósito: producto.js la llena con una tarjeta
+              por cada opción del producto (leídas desde Firestore,
+              ya no desde una lista escrita a mano acá).
+            -->
+        </div>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+    <script src="js/producto.js?v=20260925-7"></script>
+</body>
+</html>

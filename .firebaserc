@@ -1,0 +1,16 @@
+{
+  "projects": {
+    "default": "coleccionalos-69",
+    "coleccionesdeayeryhoy": "coleccionalos-69"
+  },
+  "targets": {
+    "coleccionalos-69": {
+      "hosting": {
+        "principal": [
+          "coleccionesdeayeryhoy"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

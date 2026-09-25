@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda - Colecciones de ayer y hoy</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Mismas fuentes que index.html: Baloo 2 para títulos, Inter para texto. -->
+
+    <link rel="stylesheet" href="css/style.css?v=20260925-5">
+</head>
+
+<body>
+    <!--
+      Esta es la sub-página de la tienda: a donde llega el usuario
+      después de apretar "A comprar" (ya sea directo, o después de ver
+      la escena del regalo diario).
+
+      Por ahora es solo un ESQUELETO, un placeholder, para que el
+      redireccionamiento desde index.html tenga a dónde ir y podamos
+      probar que todo el flujo funciona de punta a punta.
+
+      En un próximo paso vamos a construir acá de verdad: la grilla de
+      productos coleccionables, sus precios en monedas, los botones de
+      compra, etc.
+    -->
+
+    <header>
+        <h1>Tienda de Colecciones de ayer y hoy</h1>
+    </header>
+
+    <main>
+        <p>Elige qué paquete coleccionable quieres abrir con tus monedas:</p>
+
+        <div id="grilla-productos" class="grilla-productos">
+            <!--
+              NUEVO: esta grilla ahora arranca VACÍA a propósito.
+              Antes teníamos acá, escrita a mano, la tarjeta del
+              paquete de Cheetos. Ahora que tenés el panel de
+              administración, los productos viven en Firestore, y
+              js/tienda.js los va a leer de ahí y va a dibujar una
+              tarjeta por cada uno, sin que nosotros tengamos que
+              tocar este HTML nunca más para agregar un paquete
+              nuevo.
+            -->
+            <p id="mensaje-cargando-productos">Cargando productos...</p>
+        </div>
+
+        <a href="index.html">Volver al inicio</a>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <!--
+      NUEVO: tienda.html ahora necesita hablar con Firestore para
+      traer la lista de productos, así que sumamos estos 2 SDKs.
+      Cargamos Auth para que el usuario root/admin pueda ver un acceso
+      rápido al panel de administración cuando todavía no hay tiendas.
+    -->
+
+    <script src="js/tienda.js?v=20260925-4"></script>
+</body>
+</html>

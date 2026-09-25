@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar lugares - Colecciones de ayer y hoy</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css?v=20260925-5">
+</head>
+
+<body>
+    <!--
+      Panel de administración: acá se agregan los lugares donde los
+      usuarios podrán comprar alimentos/productos con coleccionables.
+
+      Es una página con DOS capas de protección:
+
+      1) VISUAL (la que hace este HTML + admin.js): si quien entra no
+         es tu cuenta, ve un mensaje y no el formulario. Esto es solo
+         comodidad/experiencia, un usuario con conocimientos técnicos
+         podría saltearse esto.
+
+      2) REAL (las reglas de Firestore, que viven en la consola de
+         Firebase, no acá): aunque alguien lograra ver este
+         formulario y apretar "Guardar", Firestore va a RECHAZAR el
+         guardado si el email de esa sesión no es el tuyo. Esa es la
+         protección de verdad.
+    -->
+
+    <header>
+        <h1>Administrar lugares</h1>
+    </header>
+
+    <main>
+        <a href="index.html" class="link-volver">&larr; Volver al inicio</a>
+
+        <p id="mensaje-sin-permiso" class="oculto">
+            Esta sección es solo para la cuenta administradora.
+            <a href="index.html">Vuelve al inicio</a> e inicia sesión con esa cuenta.
+        </p>
+        <!--
+          Este mensaje arranca oculto. admin.js decide, apenas carga
+          la página, si lo muestra (y esconde el panel) o si hace
+          exactamente lo contrario.
+        -->
+
+        <div id="panel-admin" class="oculto">
+            <!--
+              Todo el contenido real del panel vive adentro de este
+              div, así es fácil mostrarlo/ocultarlo entero con una
+              sola clase, en vez de tener que acordarnos de cada
+              pedacito por separado.
+            -->
+
+            <section class="bloque-admin">
+                <h2 id="titulo-form-lugar">Agregar nuevo lugar de compra</h2>
+
+                <form id="form-nuevo-producto">
+                    <!--
+                      IMPORTANTE: usamos "form" con su evento "submit"
+                      (en vez de solo un botón con "click") porque así
+                      el navegador también dispara el guardado si el
+                      usuario aprieta Enter mientras escribe en un
+                      campo de texto — un comportamiento estándar que
+                      la gente espera de cualquier formulario.
+                    -->
+
+                    <label for="input-nombre-producto">Nombre del lugar</label>
+                    <input type="text" id="input-nombre-producto" placeholder="Ej: Kiosco del barrio" required>
+
+                    <label for="input-archivo-imagen">Imagen del lugar</label>
+                    <input type="file" id="input-archivo-imagen" accept="image/*">
+                    <p class="texto-ayuda" id="texto-estado-subida">
+                        Elige una foto desde tu computadora o celular. Se comprime y
+                        se sube sola a Cloudinary apenas la elegís, no hace falta
+                        ningún paso más.
+                    </p>
+
+                    <img id="preview-imagen-producto" class="oculto" alt="Vista previa de la imagen elegida">
+                    <!--
+                      Esta imagen arranca oculta. admin.js la va a mostrar (con la
+                      foto ya subida a Cloudinary) apenas termine la subida, para
+                      que puedas confirmar de un vistazo que se subió la correcta
+                      antes de guardar el producto.
+                    -->
+
+                    <input type="hidden" id="input-imagen-producto">
+                    <!--
+                      Este input queda OCULTO (type="hidden"): nadie lo ve ni lo
+                      toca a mano. Es donde admin.js guarda la URL real que
+                      Cloudinary nos devuelve después de subir la foto, para que
+                      viaje junto con el resto del formulario cuando guardás el
+                      producto. La imagen es opcional: si queda vacío, la tienda
+                      se guarda igual y las pantallas públicas muestran una imagen
+                      de respaldo.
+                    -->
+
+                    <h3>Productos que se pueden comprar en este lugar</h3>
+                    <div id="contenedor-opciones">
+                        <!--
+                          Acá van a ir apareciendo las filas de
+                          "nombre + precio" de cada opción. Arranca
+                          vacío; el botón de abajo agrega la primera.
+                        -->
+                    </div>
+
+                    <button type="button" id="boton-agregar-opcion" class="boton-secundario">
+                        + Agregar producto
+                    </button>
+                    <!--
+                      type="button" es clave acá: sin esto, por
+                      defecto un <button> dentro de un <form> actúa
+                      como botón de "enviar" y nos mandaría el
+                      formulario antes de tiempo, cada vez que
+                      quisiéramos agregar una fila nueva.
+                    -->
+
+                    <button type="submit" class="boton-comprar">Guardar lugar</button>
+                    <button type="button" id="boton-cancelar-edicion" class="boton-secundario oculto">Cancelar edición</button>
+                </form>
+            </section>
+
+            <section class="bloque-admin">
+                <h2>Lugares ya cargados</h2>
+                <div id="lista-productos-admin">
+                    <p>Cargando productos...</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+
+    <footer id="info-admin-root" class="oculto" aria-label="Notas root del panel de administración">
+        <section class="panel-notas-root">
+            <h2>Notas root: administrar lugares</h2>
+            <p>Este bloque explica solo esta parte del sitio. Es visible únicamente para la cuenta root/admin.</p>
+            <ul>
+                <li><strong>Primer nivel:</strong> este formulario crea un <code>lugar de compra</code>. En Firestore todavía se guarda en la colección <code>productos</code> por compatibilidad técnica.</li>
+                <li><strong>Campos del lugar:</strong> cada documento guarda <code>nombre</code>, <code>imagen</code> y <code>opciones</code>. La imagen del lugar aparece en el modal del botón <code>A comprar</code>.</li>
+                <li><strong>Segundo nivel:</strong> dentro de <code>opciones</code> viven los alimentos/productos de ese lugar. Cada producto interno guarda <code>id</code>, <code>nombre</code>, <code>precio</code>, <code>imagen</code> y una lista opcional de <code>premios</code>.</li>
+                <li><strong>Subida de imágenes:</strong> las imágenes del lugar y de los productos internos se comprimen en el navegador, se suben a Cloudinary y se guarda la URL optimizada con <code>f_auto,q_auto</code>.</li>
+                <li><strong>Compra:</strong> <code>producto.html?id=...</code> abre un lugar y muestra sus productos internos. Al comprar, se descuenta el precio y se agrega a <code>usuarios/{uid}.coleccionables</code> un premio aleatorio configurado en ese producto.</li>
+                <li><strong>Premios opcionales:</strong> los productos sin <code>premios</code> se pueden comprar, pero no agregan coleccionables a la colección.</li>
+                <li><strong>Para futuras IAs:</strong> no renombrar todavía la colección Firestore <code>productos</code> sin migrar también <code>tienda.js</code>, <code>producto.js</code>, <code>coleccion.js</code> y las reglas de Firestore.</li>
+            </ul>
+        </section>
+    </footer>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+    <script src="js/admin.js?v=20260925-6"></script>
+</body>
+</html>

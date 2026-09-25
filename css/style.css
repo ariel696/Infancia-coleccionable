@@ -1,0 +1,1673 @@
+/*
+  ===========================================
+  style.css - Hoja de estilos de Colecciones de ayer y hoy
+  ===========================================
+
+  Escrito con enfoque MOBILE-FIRST: todas las reglas de acá abajo
+  están pensadas primero para pantalla chica (celular). Recién al
+  final agregamos una @media query que "agranda" cosas para
+  pantallas de 700px o más (tablet/notebook).
+
+  Identidad visual: paleta cálida "de kiosco de barrio ochentero/
+  noventero" (crema tipo papel viejo, mostaza/dorado, rojo cereza,
+  verde menta de acento) + tipografía Baloo 2 (títulos, redondeada,
+  con onda de sticker) + Inter (texto, bien legible).
+*/
+
+/* -----------------------------------------------------------------
+   1) VARIABLES DE CSS (:root)
+   -----------------------------------------------------------------
+   Acá definimos, UNA sola vez, todos los colores y valores que
+   vamos a reutilizar en el archivo. Si mañana querés cambiar el
+   rojo principal de toda la página, cambiás UNA línea acá y se
+   actualiza en todos lados donde se usa var(--color-rojo-cereza).
+   ":root" es un selector especial que representa "todo el documento",
+   así estas variables quedan disponibles para cualquier regla de
+   acá para abajo.
+------------------------------------------------------------------ */
+:root {
+  /* Colores base */
+  --color-crema: #F4EAD3;        /* fondo general, tipo papel viejo */
+  --color-papel: #FFF8E7;        /* fondo de tarjetas, un poco más claro */
+  --color-mostaza: #E6A93B;      /* dorado/mostaza, tipo paquete de papas fritas */
+  --color-mostaza-oscuro: #C88A22;
+  --color-rojo-cereza: #C6402E;  /* color principal de acento (botones, títulos) */
+  --color-rojo-cereza-oscuro: #A2321F;
+  --color-verde-menta: #6FC6A3;  /* acento secundario, para contrastar con el rojo */
+  --color-verde-menta-oscuro: #4FA382;
+  --color-texto: #3B2E20;        /* casi negro, pero cálido (no gris frío) */
+  --color-texto-suave: #7A6A54;  /* para texto secundario, menos protagonista */
+  --color-blanco: #FFFDF7;
+
+  /* Tipografías */
+  --fuente-titulos: "Baloo 2", cursive;
+  --fuente-texto: "Inter", sans-serif;
+
+  /* Otros valores reutilizables */
+  --radio-borde: 16px;
+  --radio-borde-chico: 10px;
+  --sombra-tarjeta: 0 4px 14px rgba(59, 46, 32, 0.15);
+  --alto-tactil: 48px; /* alto mínimo recomendado para botones/links tocables */
+  --ancho-contenido: 480px; /* ancho máximo del contenido en mobile */
+}
+
+/* -----------------------------------------------------------------
+   2) RESET BÁSICO
+   -----------------------------------------------------------------
+   Cada navegador trae sus propios márgenes/paddings por defecto en
+   ciertas etiquetas (body, h1, ul, etc.), y no son iguales entre
+   todos. Este reset chico nos da un punto de partida limpio e
+   igual en todos lados, para no pelearnos con sorpresas.
+------------------------------------------------------------------ */
+* {
+  box-sizing: border-box;
+  /*
+    "border-box" cambia cómo se calcula el ancho/alto de cada
+    elemento: el padding y el borde quedan INCLUIDOS dentro del
+    ancho que vos definís, en vez de sumarse aparte. Es el
+    comportamiento que casi todo el mundo espera de forma intuitiva,
+    y evita que un elemento "se rompa" el layout por tener padding.
+  */
+  margin: 0;
+  padding: 0;
+}
+
+/* -----------------------------------------------------------------
+   3) ESTILOS GENERALES DEL DOCUMENTO
+   ------------------------------------------------------------------ */
+body {
+  background-color: var(--color-crema);
+  color: var(--color-texto);
+  font-family: var(--fuente-texto);
+  line-height: 1.5;
+  /*
+    "line-height: 1.5" separa un poco las líneas de texto entre sí
+    (1.5 veces el tamaño de la letra). Mejora mucho la legibilidad,
+    sobre todo en pantallas chicas.
+  */
+  -webkit-font-smoothing: antialiased;
+}
+
+.oculto {
+  display: none !important;
+  /*
+    "display: none" hace que el navegador trate a este elemento como
+    si no existiera: no se ve, y tampoco ocupa espacio en la página.
+    Clase de utilidad: la usamos desde JavaScript para mostrar/ocultar
+    lo que necesitemos en cada momento.
+  */
+}
+
+/* -----------------------------------------------------------------
+   4) ENCABEZADO (header)
+   -----------------------------------------------------------------
+   El header es lo primero que se ve al entrar: le damos el color
+   mostaza como protagonista, con el título en Baloo 2, y un borde
+   inferior en rojo cereza como si fuera el "cintillo" de un envase.
+------------------------------------------------------------------ */
+header {
+  position: relative;
+  /*
+    "position: relative" no mueve nada del header en sí, pero convierte
+    a este header en el "marco de referencia" para cualquier hijo que
+    use "position: absolute" (como el link de "Mi colección" de más
+    abajo). Sin esta línea, ese link se posicionaría respecto a toda
+    la página en vez de respecto al header.
+  */
+  background-color: var(--color-mostaza);
+  border-bottom: 5px solid var(--color-rojo-cereza);
+  padding: 20px 16px;
+  text-align: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 12px;
+}
+
+header h1 {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0;
+  font-family: var(--fuente-titulos);
+  font-weight: 700;
+  color: var(--color-blanco);
+  font-size: 1.6rem;
+  /*
+    "rem" es una unidad relativa al tamaño de fuente base del
+    navegador (normalmente 16px). Usamos rem en vez de px para el
+    texto porque respeta si el usuario configuró una letra más
+    grande por accesibilidad; con px eso se ignoraría.
+  */
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.12);
+  letter-spacing: 0.5px;
+}
+
+header h1 span {
+  display: block;
+}
+
+/* -----------------------------------------------------------------
+   5) CONTENIDO PRINCIPAL (main)
+   ------------------------------------------------------------------ */
+main {
+  max-width: var(--ancho-contenido);
+  margin: 0 auto;
+  /*
+    "margin: 0 auto" centra el bloque horizontalmente: 0 arriba/abajo,
+    y "auto" a los costados hace que el navegador reparta el espacio
+    sobrante en partes iguales a izquierda y derecha.
+  */
+  padding: 24px 16px 40px;
+}
+
+#hero {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 20px;
+  /*
+    "gap" define el espacio entre los elementos hijos del flexbox,
+    sin necesidad de andar poniendo margin manualmente en cada uno.
+    Lo subimos a 20px (antes 14px) porque ahora el hero tiene pocos
+    hijos "grandes" (la tarjeta de saldo, el grupo de acciones, el
+    panel de recarga y el botón de cerrar sesión), y conviene que se
+    note un espacio más claro ENTRE esos bloques que el que hay
+    DENTRO de cada uno.
+  */
+}
+
+/* -----------------------------------------------------------------
+   5.1) TARJETA DE SALDO
+   -----------------------------------------------------------------
+   Agrupa el saludo, el botón de "regalo diario" y el contador de
+   monedas dentro de una misma caja visual, para que se lean como
+   "un solo tema" en vez de líneas sueltas una debajo de la otra.
+------------------------------------------------------------------ */
+.tarjeta-saldo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  background-color: var(--color-papel);
+  border: 2px solid var(--color-mostaza);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 16px;
+}
+
+/* -----------------------------------------------------------------
+   5.2) GRUPO DE ACCIONES PRINCIPALES
+   -----------------------------------------------------------------
+   "Mi colección" y "A comprar" son las dos acciones de navegación
+   más importantes de la página: las mostramos juntas, del mismo
+   tamaño, para que el usuario las lea como "las dos cosas que puedo
+   hacer ahora", en vez de dos botones sueltos y descoordinados.
+------------------------------------------------------------------ */
+.grupo-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#estado-usuario {
+  font-weight: 600;
+  font-size: 1.05rem;
+  min-height: 1.3rem;
+  /*
+    "min-height" evita que la página "salte" (cambie de tamaño de
+    golpe) cuando JavaScript le agrega el texto de "Hola, Nombre".
+    Reservamos el espacio de antemano, aunque esté vacío.
+  */
+}
+
+#monedas-usuario {
+  display: none;
+  align-self: flex-start;
+  background-color: var(--color-papel);
+  border: 2px solid var(--color-mostaza-oscuro);
+  border-radius: 999px;
+  /* 999px es un truco común para lograr una forma de "píldora": un
+     radio tan grande que redondea completamente los extremos. */
+  padding: 6px 14px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-mostaza-oscuro);
+  min-height: 0;
+}
+
+#monedas-usuario:not(:empty) {
+  display: inline-block;
+  /*
+    ":not(:empty)" aplica esta regla SOLO cuando el párrafo tiene
+    contenido adentro. Así, cuando está vacío (nadie logeado), no
+    se ve la "píldora" flotando sin sentido.
+  */
+  margin-bottom: 4px;
+}
+
+/* -----------------------------------------------------------------
+   6) BOTONES Y LINKS DE ACCIÓN
+   -----------------------------------------------------------------
+   Estilamos juntos el botón principal y el link "Mi colección"
+   porque comparten la misma lógica de "área tocable cómoda": alto
+   mínimo de 48px, texto centrado, esquinas redondeadas.
+------------------------------------------------------------------ */
+#btn-accion-principal,
+#btn-dinero-diario,
+#link-mi-coleccion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--alto-tactil);
+  border-radius: var(--radio-borde-chico);
+  font-family: var(--fuente-texto);
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+  /*
+    "transition" hace que los cambios (por ejemplo, al pasar el
+    mouse) se vean suaves en vez de instantáneos y bruscos.
+  */
+}
+
+#btn-accion-principal {
+  background-color: var(--color-rojo-cereza);
+  color: var(--color-blanco);
+  width: 100%;
+}
+
+#btn-dinero-diario {
+  background-color: var(--color-mostaza);
+  color: var(--color-texto);
+  width: 100%;
+}
+
+#btn-dinero-diario:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.2) opacity(0.65);
+}
+
+/* -----------------------------------------------------------------
+   6.1) BOTÓN ILUSTRADO DEL REGALO DIARIO
+   -----------------------------------------------------------------
+   Va arriba de "Agarrar dinero diario", como una versión visual del
+   mismo botón (una mano ofreciendo monedas). No lo agrupamos con la
+   regla de arriba porque es redondo y de tamaño fijo, no un botón de
+   ancho completo con texto.
+------------------------------------------------------------------ */
+.btn-regalo-diario {
+  align-self: center;
+  width: 128px;
+  height: 104px;
+  padding: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.btn-regalo-diario svg {
+  width: 100%;
+  height: 100%;
+}
+
+.btn-regalo-diario:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.35) opacity(0.6);
+}
+
+.btn-regalo-diario:not(:disabled):hover {
+  transform: scale(1.04);
+  filter: brightness(1.05);
+}
+
+.btn-regalo-diario:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+#btn-accion-principal:hover {
+  filter: brightness(1.08);
+}
+
+#btn-dinero-diario:not(:disabled):hover {
+  filter: brightness(1.06);
+}
+
+#btn-accion-principal:active {
+  transform: scale(0.98);
+  /*
+    Al presionar el botón, lo achicamos apenas un 2%. Es un detalle
+    chico, pero le da al botón una sensación "física", como si de
+    verdad lo estuvieras hundiendo.
+  */
+}
+
+#link-mi-coleccion {
+  background-color: var(--color-verde-menta);
+  color: var(--color-texto);
+}
+
+#btn-cerrar-sesion {
+  align-self: center;
+  width: auto;
+  min-height: 0;
+  padding: 10px 16px;
+  background-color: transparent;
+  color: var(--color-texto-suave);
+  border: none;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  /*
+    Antes tenía el mismo tamaño y peso visual (borde grueso, alto
+    táctil completo) que "Mi colección" y "A comprar", así que
+    competía con ellos por la atención aunque sea una acción que se
+    usa poco. Ahora es un texto discreto y centrado, típico de
+    "cerrar sesión" en cualquier app: sigue siendo fácil de tocar
+    (padding generoso) pero no se roba protagonismo.
+  */
+}
+
+#btn-cerrar-sesion:hover {
+  color: var(--color-rojo-cereza);
+}
+
+#link-mi-coleccion:hover {
+  filter: brightness(1.05);
+}
+
+/* -----------------------------------------------------------------
+   6.2) "MI COLECCIÓN" COMO ACCESO DIRECTO EN EL HEADER
+   -----------------------------------------------------------------
+   Esta regla es más específica que la de la línea 236 (que le puso
+   display:flex, min-height, etc. junto a los otros botones), así que
+   la pisa: acá lo achicamos y lo "sacamos" del flujo normal con
+   position:absolute para que flote fijo en la esquina del header,
+   como el ícono de perfil/muro de una app.
+------------------------------------------------------------------ */
+header #link-mi-coleccion {
+  position: static;
+  grid-column: 2;
+  grid-row: 1;
+  margin-top: 0;
+  transform: none;
+  min-height: 0;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  box-shadow: var(--sombra-tarjeta);
+  /*
+    "999px" de radio + poco padding = forma de píldora chica, distinta
+    a los botones grandes de abajo, para que se lea como un accesorio
+    del header ("mi perfil") y no como una acción más de la página.
+  */
+}
+
+header #link-mi-coleccion:hover {
+  transform: scale(1.04);
+  /*
+    Repetimos el translateY acá porque "transform" reemplaza el valor
+    anterior en vez de sumarlo: si solo pusiéramos "scale(1.04)" en el
+    hover, perderíamos el centrado vertical del estado normal.
+  */
+}
+
+/* -----------------------------------------------------------------
+   7) ESCENA DE RECOMPENSA (regalo diario)
+   ------------------------------------------------------------------ */
+#escena-recompensa {
+  background-color: var(--color-papel);
+  border: 3px solid var(--color-mostaza);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 16px;
+  text-align: center;
+  margin-top: 8px;
+}
+
+#escena-recompensa img {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  border-radius: var(--radio-borde-chico);
+  display: block;
+  margin: 0 auto;
+  /*
+    "max-width: 320px" evita que la imagen se vea gigante en
+    pantallas grandes, y "width: 100%" evita que se desborde en
+    pantallas chicas. "height: auto" mantiene la proporción original
+    de la imagen (así no se ve estirada ni achatada).
+  */
+}
+
+/* -----------------------------------------------------------------
+   8) LISTA DE COLECCIONABLES (coleccion.html)
+   ------------------------------------------------------------------ */
+#estado-carga {
+  text-align: center;
+  color: var(--color-texto-suave);
+  font-weight: 500;
+  padding: 24px 0;
+}
+
+#lista-coleccionables,
+#lista-inventario {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+#lista-coleccionables li,
+#lista-inventario li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: var(--color-papel);
+  border-left: 5px solid var(--color-rojo-cereza);
+  border-radius: var(--radio-borde-chico);
+  padding: 14px;
+  box-shadow: var(--sombra-tarjeta);
+  font-weight: 500;
+}
+
+
+.imagen-coleccionable {
+  width: 72px;
+  height: 72px;
+  flex: 0 0 72px;
+  object-fit: contain;
+  border: 2px solid var(--color-mostaza);
+  border-radius: 50%;
+  background-color: var(--color-blanco);
+}
+
+.contenido-coleccionable {
+  min-width: 0;
+}
+
+.modal-premio {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background-color: rgba(59, 46, 32, 0.72);
+}
+
+.modal-premio-contenido {
+  width: min(100%, 560px);
+  max-height: 92vh;
+  overflow: auto;
+  background-color: var(--color-papel);
+  border: 3px solid var(--color-mostaza);
+  border-radius: var(--radio-borde);
+  box-shadow: 0 18px 40px rgba(59, 46, 32, 0.35);
+  padding: 20px;
+  text-align: center;
+}
+
+.modal-premio-contenido h2 {
+  font-family: var(--fuente-titulos);
+  color: var(--color-rojo-cereza);
+  font-size: 1.55rem;
+  margin-bottom: 6px;
+}
+
+.modal-premio-contenido p {
+  color: var(--color-texto-suave);
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.modal-premio-tazos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.tarjeta-tazo-premio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background-color: var(--color-blanco);
+  border: 2px solid var(--color-verde-menta);
+  border-radius: var(--radio-borde-chico);
+}
+
+.imagen-tazo-premio {
+  width: min(180px, 70vw);
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.tarjeta-tazo-premio strong {
+  color: var(--color-texto);
+  line-height: 1.25;
+}
+
+.modal-lugares {
+  position: fixed;
+  inset: 0;
+  z-index: 950;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background-color: rgba(59, 46, 32, 0.72);
+}
+
+.modal-lugares-contenido {
+  position: relative;
+  width: min(100%, 720px);
+  max-height: 92vh;
+  overflow: auto;
+  background-color: var(--color-papel);
+  border: 3px solid var(--color-mostaza);
+  border-radius: var(--radio-borde);
+  box-shadow: 0 18px 40px rgba(59, 46, 32, 0.35);
+  padding: 20px;
+}
+
+.modal-lugares-contenido h2 {
+  padding-right: 42px;
+  font-family: var(--fuente-titulos);
+  color: var(--color-rojo-cereza);
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+
+.btn-cerrar-modal {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--color-rojo-cereza);
+  border-radius: 50%;
+  background-color: transparent;
+  color: var(--color-rojo-cereza);
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.grilla-lugares-compra {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.tarjeta-lugar-compra {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 3px solid var(--color-mostaza);
+  border-radius: var(--radio-borde);
+  background-color: var(--color-blanco);
+  box-shadow: var(--sombra-tarjeta);
+  color: var(--color-texto);
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tarjeta-lugar-compra:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(59, 46, 32, 0.2);
+}
+
+.tarjeta-lugar-compra img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background-color: var(--color-papel);
+}
+
+.tarjeta-lugar-compra span {
+  padding: 12px;
+  font-family: var(--fuente-titulos);
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--color-rojo-cereza);
+}
+
+.link-admin-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: var(--alto-tactil);
+  margin-top: 16px;
+  border: 2px dashed var(--color-verde-menta-oscuro);
+  border-radius: var(--radio-borde-chico);
+  color: var(--color-verde-menta-oscuro);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+/* -----------------------------------------------------------------
+   9) TÍTULOS Y LINKS GENÉRICOS (aplica en cualquier página)
+   ------------------------------------------------------------------ */
+main h1 {
+  font-family: var(--fuente-titulos);
+  color: var(--color-rojo-cereza);
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+}
+
+main > a {
+  /*
+    Selector "main > a": links que son HIJOS DIRECTOS de <main>
+    (como el "Volver al inicio" de tienda.html y coleccion.html).
+    No afecta a links que estén adentro de otras cajas, como
+    #link-mi-coleccion, que ya tiene sus propios estilos arriba.
+  */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--alto-tactil);
+  padding: 0 18px;
+  margin-top: 16px;
+  color: var(--color-rojo-cereza);
+  font-weight: 600;
+  text-decoration: none;
+  border: 2px solid var(--color-rojo-cereza);
+  border-radius: var(--radio-borde-chico);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+main > a:hover {
+  background-color: var(--color-rojo-cereza);
+  color: var(--color-blanco);
+}
+
+/* -----------------------------------------------------------------
+   9.1) TIENDA: grilla de productos (tienda.html)
+   -----------------------------------------------------------------
+   "grilla-productos" arma un grid que hoy tiene una sola columna
+   (ideal para celular, un producto abajo del otro) y que en la
+   media query de más abajo pasa a 2 columnas para pantallas más
+   anchas, para aprovechar el espacio.
+------------------------------------------------------------------ */
+.grilla-productos {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.tarjeta-producto {
+  /*
+    Esta es la tarjeta-botón del "envase de comida" que pediste: una
+    etiqueta <a> (link) a la que le damos pinta de tarjeta grande y
+    tocable con CSS, en vez de un link de texto suelto.
+  */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--color-papel);
+  border: 3px solid var(--color-mostaza);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 16px;
+  text-decoration: none;
+  color: var(--color-texto);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tarjeta-producto:hover {
+  transform: translateY(-3px);
+  /* Al pasar el mouse, la tarjeta "flota" apenas 3px hacia arriba,
+     dando la sensación de que se puede levantar/tocar. */
+  box-shadow: 0 8px 18px rgba(59, 46, 32, 0.2);
+}
+
+.tarjeta-producto:active {
+  transform: scale(0.98);
+}
+
+.tarjeta-admin-vacia {
+  min-height: var(--alto-tactil);
+  justify-content: center;
+  border-style: dashed;
+  color: var(--color-verde-menta-oscuro);
+  font-weight: 800;
+  text-align: center;
+}
+
+.imagen-producto {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  border-radius: var(--radio-borde-chico);
+  /*
+    "height: auto" mantiene la proporción original de la foto del
+    paquete, así no se ve estirada ni achatada, sin importar el
+    tamaño real del archivo que subiste.
+  */
+}
+
+.nombre-producto {
+  font-family: var(--fuente-titulos);
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-align: center;
+  color: var(--color-rojo-cereza);
+}
+
+/* -----------------------------------------------------------------
+   9.2) TIENDA-CHEETOS: link para volver y monedas disponibles
+   ------------------------------------------------------------------ */
+.link-volver {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: var(--color-texto-suave);
+  font-weight: 600;
+  text-decoration: none;
+  min-height: 0;
+  /*
+    "min-height: 0" acá es a propósito: este link chico de "volver"
+    NO necesita el alto táctil de 48px como los botones grandes,
+    porque no es la acción principal de la página. Igual sigue
+    siendo perfectamente tocable por su padding natural del texto.
+  */
+}
+
+.link-volver:hover {
+  color: var(--color-rojo-cereza);
+}
+
+.link-editar-lugar {
+  display: inline-flex;
+  min-height: 0;
+  margin: 0 0 16px 8px;
+  padding: 5px 10px;
+  border: 1px dashed var(--color-verde-menta-oscuro);
+  border-radius: 999px;
+  color: var(--color-verde-menta-oscuro);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.link-editar-lugar:hover {
+  background-color: rgba(79, 163, 130, 0.12);
+}
+
+#monedas-disponibles {
+  display: inline-block;
+  background-color: var(--color-papel);
+  border: 2px solid var(--color-mostaza-oscuro);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-weight: 600;
+  color: var(--color-mostaza-oscuro);
+  margin-bottom: 8px;
+}
+
+.texto-ayuda {
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+
+/* -----------------------------------------------------------------
+   9.3) TIENDA-CHEETOS: grilla de opciones (tazos) y botón de compra
+   ------------------------------------------------------------------ */
+.grilla-opciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.tarjeta-opcion {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 0 18px;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.vista-producto-comprable {
+  appearance: none;
+  position: relative;
+  width: min(100%, 190px);
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+  overflow: hidden;
+  background-color: transparent;
+  outline: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.16s ease, filter 0.16s ease;
+}
+
+.vista-producto-comprable:focus-visible {
+  box-shadow: 0 0 0 3px rgba(79, 163, 130, 0.35);
+  border-radius: var(--radio-borde);
+}
+
+.vista-producto-comprable:hover {
+  transform: translateY(-3px) scale(1.015);
+}
+
+.vista-producto-comprable:active {
+  transform: scale(0.985);
+}
+
+.vista-producto-comprable.sin-imagen {
+  width: min(100%, 190px);
+  min-height: 0;
+  padding: 14px;
+  background-color: rgba(255, 248, 232, 0.85);
+  border: 2px dashed var(--color-mostaza);
+  border-radius: var(--radio-borde);
+}
+
+.imagen-opcion {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 14px rgba(59, 46, 32, 0.2));
+}
+
+.descripcion-opcion {
+  position: absolute;
+  inset: auto 10px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 12px;
+  color: var(--color-blanco);
+  background: rgba(59, 46, 32, 0.82);
+  border-radius: var(--radio-borde-chico);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  pointer-events: none;
+}
+
+.vista-producto-comprable:hover .descripcion-opcion,
+.vista-producto-comprable:focus .descripcion-opcion,
+.vista-producto-comprable:focus-within .descripcion-opcion {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.nombre-opcion {
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.descripcion-opcion span {
+  font-size: 0.86rem;
+  line-height: 1.25;
+}
+
+.vista-producto-comprable.sin-imagen .descripcion-opcion {
+  position: static;
+  color: var(--color-texto);
+  background: transparent;
+  padding: 0;
+  opacity: 1;
+  transform: none;
+}
+
+.vista-producto-comprable.sin-imagen .nombre-opcion {
+  color: var(--color-rojo-cereza);
+  font-family: var(--fuente-titulos);
+  font-size: 1.25rem;
+}
+
+.vista-producto-comprable.sin-imagen .descripcion-opcion span {
+  color: var(--color-texto-suave);
+}
+
+.compra-producto {
+  display: flex;
+  width: min(100%, 190px);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.precio-opcion {
+  color: var(--color-mostaza-oscuro);
+  font-weight: 800;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.boton-comprar {
+  min-height: var(--alto-tactil);
+  padding: 0 18px;
+  border: none;
+  border-radius: var(--radio-borde-chico);
+  background-color: var(--color-rojo-cereza);
+  color: var(--color-blanco);
+  font-family: var(--fuente-texto);
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.boton-comprar:hover {
+  filter: brightness(1.08);
+}
+
+.boton-comprar:active {
+  transform: scale(0.96);
+}
+
+/* -----------------------------------------------------------------
+   9.4) LINK "ADMINISTRAR PRODUCTOS" (index.html)
+   -----------------------------------------------------------------
+   Reutiliza la misma "forma" que los otros botones grandes (mismo
+   alto táctil), pero con un color distinto (verde menta oscuro
+   sobre fondo transparente con borde) para que se note que es una
+   acción distinta y "de bambalinas", no la acción principal del
+   usuario común.
+------------------------------------------------------------------ */
+#link-admin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--alto-tactil);
+  border: 2px dashed var(--color-verde-menta-oscuro);
+  border-radius: var(--radio-borde-chico);
+  color: var(--color-verde-menta-oscuro);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+#link-admin:hover {
+  background-color: var(--color-verde-menta-oscuro);
+  color: var(--color-blanco);
+}
+
+/* -----------------------------------------------------------------
+   9.5) PANEL DE ADMINISTRACIÓN (admin.html)
+   ------------------------------------------------------------------ */
+.bloque-admin {
+  background-color: var(--color-papel);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 18px;
+  margin-bottom: 20px;
+}
+
+.bloque-admin h2 {
+  font-family: var(--fuente-titulos);
+  color: var(--color-rojo-cereza);
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+}
+
+.bloque-admin h3 {
+  font-size: 1rem;
+  margin: 16px 0 8px;
+  color: var(--color-texto);
+}
+
+#form-nuevo-producto label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 12px 0 4px;
+}
+
+#form-nuevo-producto input[type="text"],
+#form-nuevo-producto input[type="number"] {
+  width: 100%;
+  min-height: var(--alto-tactil);
+  padding: 0 12px;
+  border: 2px solid var(--color-mostaza);
+  border-radius: var(--radio-borde-chico);
+  font-family: var(--fuente-texto);
+  font-size: 1rem;
+  background-color: var(--color-blanco);
+  color: var(--color-texto);
+}
+
+#form-nuevo-producto input:focus {
+  outline: none;
+  border-color: var(--color-rojo-cereza);
+  /*
+    "outline: none" saca el contorno azul por defecto del navegador,
+    pero OJO: lo reemplazamos inmediatamente por otra señal visual
+    clara (el borde cambia a rojo cereza). Nunca hay que sacar el
+    indicador de foco sin poner otro en su lugar, porque quienes
+    navegan con teclado dependen de él para saber dónde están
+    parados.
+  */
+}
+
+/* NUEVO: input de tipo archivo (subida de imagen a Cloudinary) */
+#form-nuevo-producto input[type="file"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px dashed var(--color-mostaza);
+  border-radius: var(--radio-borde-chico);
+  font-family: var(--fuente-texto);
+  font-size: 0.9rem;
+  background-color: var(--color-blanco);
+  color: var(--color-texto-suave);
+  /*
+    Borde "dashed" (punteado) en vez del sólido que usan los demás
+    campos: es una convención visual muy común para "acá soltás o
+    elegís un archivo", distinta a un campo de texto común.
+  */
+}
+
+/* NUEVO: vista previa de la imagen ya subida */
+#preview-imagen-producto {
+  display: block;
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  border-radius: var(--radio-borde-chico);
+  border: 2px solid var(--color-mostaza);
+  margin: 10px 0;
+}
+
+.fila-opcion {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 12px;
+  border: 1px solid rgba(200, 138, 34, 0.35);
+  border-radius: var(--radio-borde-chico);
+  background-color: rgba(255, 253, 247, 0.72);
+}
+
+.fila-opcion-principal,
+.fila-premio {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.fila-opcion .input-nombre-opcion {
+  flex: 2 1 160px;
+}
+
+.fila-opcion .input-archivo-opcion {
+  flex: 1 1 180px;
+}
+
+.fila-opcion .preview-opcion {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border: 2px solid var(--color-mostaza);
+  border-radius: var(--radio-borde-chico);
+}
+
+.fila-opcion .estado-subida-opcion {
+  flex: 1 1 160px;
+  margin-bottom: 0;
+}
+
+.fila-opcion .input-precio-opcion {
+  flex: 1 1 100px;
+}
+
+.fila-opcion .select-tipo-opcion {
+  flex: 1 1 130px;
+  min-height: var(--alto-tactil);
+  padding: 0 10px;
+  border: 2px solid var(--color-mostaza);
+  border-radius: var(--radio-borde-chico);
+  background-color: var(--color-blanco);
+  color: var(--color-texto);
+  font: inherit;
+}
+
+.panel-premios-opcion {
+  padding: 10px;
+  border: 1px dashed var(--color-verde-menta-oscuro);
+  border-radius: var(--radio-borde-chico);
+  background-color: rgba(111, 198, 163, 0.08);
+}
+
+.panel-premios-opcion h4 {
+  margin-bottom: 4px;
+  color: var(--color-verde-menta-oscuro);
+  font-size: 0.95rem;
+}
+
+.contenedor-premios-opcion {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.fila-premio {
+  padding: 8px;
+  border-radius: var(--radio-borde-chico);
+  background-color: var(--color-blanco);
+}
+
+.fila-premio .input-nombre-premio {
+  flex: 2 1 190px;
+}
+
+.fila-premio .input-archivo-premio {
+  flex: 1 1 180px;
+}
+
+.boton-secundario,
+.boton-editar-fila,
+.boton-quitar-fila {
+  min-height: var(--alto-tactil);
+  padding: 0 16px;
+  border-radius: var(--radio-borde-chico);
+  font-family: var(--fuente-texto);
+  font-weight: 600;
+  cursor: pointer;
+  border: 2px solid var(--color-verde-menta-oscuro);
+  background-color: transparent;
+  color: var(--color-verde-menta-oscuro);
+}
+
+.boton-quitar-fila {
+  border-color: var(--color-rojo-cereza);
+  color: var(--color-rojo-cereza);
+}
+
+.boton-editar-fila {
+  border-color: var(--color-mostaza-oscuro);
+  color: var(--color-mostaza-oscuro);
+}
+
+#form-nuevo-producto .boton-comprar {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.tarjeta-producto-admin {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid var(--color-mostaza);
+}
+
+
+.resumen-producto-admin {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.miniatura-producto-admin {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  object-fit: cover;
+  border: 2px solid var(--color-mostaza);
+  border-radius: var(--radio-borde-chico);
+  background-color: var(--color-blanco);
+}
+
+.miniatura-agregar-imagen-admin {
+  width: 72px;
+  min-height: 44px;
+  flex: 0 0 72px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border: 1px dashed var(--color-mostaza);
+  border-radius: var(--radio-borde-chico);
+  color: var(--color-rojo);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.55);
+}
+.tarjeta-producto-admin:last-child {
+  border-bottom: none;
+}
+
+/* -----------------------------------------------------------------
+   10) PIE DE PÁGINA (footer)
+   ------------------------------------------------------------------ */
+footer {
+  text-align: center;
+  padding: 16px;
+  color: var(--color-texto-suave);
+  font-size: 0.8rem;
+}
+
+#info-root {
+  max-width: 760px;
+  margin: 18px auto 0;
+  padding: 16px;
+  text-align: left;
+  background-color: var(--color-papel);
+  border: 2px dashed var(--color-verde-menta-oscuro);
+  border-radius: var(--radio-borde-chico);
+  color: var(--color-texto);
+}
+
+#info-root h2 {
+  font-family: var(--fuente-titulos);
+  color: var(--color-rojo-cereza);
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+#info-root p {
+  margin-bottom: 10px;
+}
+
+#info-root ul {
+  padding-left: 20px;
+}
+
+#info-root li {
+  margin-bottom: 8px;
+}
+
+#info-root code {
+  font-family: Consolas, Monaco, monospace;
+  font-size: 0.85em;
+  background-color: var(--color-blanco);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+#info-admin-root {
+  max-width: var(--ancho-contenido);
+  margin: 0 auto 28px;
+  padding: 0 16px;
+  text-align: left;
+  color: var(--color-texto);
+  font-size: 0.86rem;
+}
+
+.panel-notas-root {
+  background-color: var(--color-papel);
+  border: 2px dashed var(--color-verde-menta-oscuro);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 16px;
+}
+
+.panel-notas-root h2 {
+  font-family: var(--fuente-titulos);
+  color: var(--color-rojo-cereza);
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+}
+
+.panel-notas-root p {
+  margin-bottom: 10px;
+  color: var(--color-texto-suave);
+}
+
+.panel-notas-root ul {
+  padding-left: 20px;
+}
+
+.panel-notas-root li {
+  margin-bottom: 8px;
+}
+
+.panel-notas-root code {
+  font-family: Consolas, Monaco, monospace;
+  font-size: 0.85em;
+  background-color: var(--color-blanco);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+/* -----------------------------------------------------------------
+   11) MEDIA QUERY: pantallas de 700px o más (tablet / notebook)
+   -----------------------------------------------------------------
+   Acá "agrandamos" cosas para aprovechar el espacio extra. Esta
+   regla SOLO se aplica cuando el ancho de la pantalla es 700px o
+   mayor; en celulares (pantallas más angostas) el navegador la
+   ignora por completo y se queda con todo lo de arriba.
+------------------------------------------------------------------ */
+@media (min-width: 700px) {
+  header {
+    display: block;
+  }
+
+  :root {
+    --ancho-contenido: 640px;
+  }
+
+  header h1 {
+    font-size: 2.2rem;
+  }
+
+  header h1 span {
+    display: inline;
+  }
+
+  main h1 {
+    font-size: 1.8rem;
+  }
+
+  main {
+    padding: 40px 24px 60px;
+  }
+
+  #hero {
+    gap: 18px;
+  }
+
+  #btn-dinero-diario {
+    width: auto;
+    align-self: flex-start;
+    padding: 0 32px;
+  }
+
+  .grupo-acciones {
+    flex-direction: row;
+  }
+
+  .grupo-acciones #btn-accion-principal {
+    flex: 1 1 0;
+    width: auto;
+  }
+
+  header #link-mi-coleccion {
+    position: absolute;
+    top: 50%;
+    right: 24px;
+    margin-top: 0;
+    transform: translateY(-50%);
+    font-size: 0.95rem;
+    padding: 8px 18px;
+    /*
+      En pantallas más anchas el header también crece (ver
+      "header h1" arriba), así que le damos un poco más de aire al
+      link para que no se vea perdido en la esquina.
+    */
+  }
+
+  header #link-mi-coleccion:hover {
+    transform: translateY(-50%) scale(1.04);
+  }
+
+  #escena-recompensa img {
+    max-width: 400px;
+  }
+
+  .grilla-productos {
+    grid-template-columns: 1fr 1fr;
+    /* En pantallas de 700px o más, los productos se acomodan de a 2
+       por fila en vez de uno abajo del otro. */
+  }
+
+  .grilla-lugares-compra {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.detalle-coleccionable {
+  display: block;
+  margin-top: 4px;
+  color: var(--color-texto-suave);
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+.panel-recarga-root {
+  background-color: var(--color-papel);
+  border: 2px dashed var(--color-verde-menta-oscuro);
+  border-radius: var(--radio-borde-chico);
+  padding: 12px;
+}
+
+.panel-recarga-root label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+  color: var(--color-verde-menta-oscuro);
+}
+
+.fila-recarga-root {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#input-recarga-monedas {
+  flex: 1 1 120px;
+  min-height: var(--alto-tactil);
+  padding: 0 12px;
+  border: 2px solid var(--color-mostaza);
+  border-radius: var(--radio-borde-chico);
+  font-family: var(--fuente-texto);
+  font-size: 1rem;
+}
+
+#btn-recargar-monedas {
+  min-height: var(--alto-tactil);
+  padding: 0 16px;
+  border: none;
+  border-radius: var(--radio-borde-chico);
+  background-color: var(--color-verde-menta-oscuro);
+  color: var(--color-blanco);
+  font-family: var(--fuente-texto);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#estado-recarga-monedas {
+  margin: 8px 0 0;
+}
+
+.cabecera-perfil {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 18px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid var(--color-mostaza);
+}
+
+.foto-perfil {
+  width: 96px;
+  height: 96px;
+  flex: 0 0 96px;
+  object-fit: cover;
+  border: 4px solid var(--color-mostaza);
+  border-radius: 50%;
+  background-color: var(--color-papel);
+}
+
+.datos-perfil h2,
+.seccion-muro h2 {
+  margin: 0;
+  font-family: var(--fuente-titulos);
+  color: var(--color-texto);
+}
+
+.datos-perfil p {
+  margin: 4px 0 10px;
+  color: var(--color-texto-suave);
+}
+
+.link-perfil {
+  color: var(--color-rojo-cereza);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.controles-perfil {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 0 0 24px;
+}
+
+.selector-foto {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.controles-perfil .texto-ayuda {
+  width: 100%;
+  margin: 0;
+}
+
+.seccion-muro {
+  margin: 24px 0;
+}
+
+.lista-muro {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 0;
+  margin: 12px 0 0;
+  list-style: none;
+}
+
+.lista-muro li {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 2px solid var(--color-mostaza);
+  border-radius: var(--radio-borde-chico);
+  background-color: var(--color-papel);
+  box-shadow: var(--sombra-tarjeta);
+}
+
+.lista-muro li .boton-articulo-muro {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.lista-muro li .boton-articulo-muro:focus-visible {
+  outline: 3px solid var(--color-verde-menta-oscuro);
+  outline-offset: 3px;
+}
+
+.lista-muro li .boton-articulo-muro:hover img {
+  transform: scale(1.03);
+}
+
+.lista-muro li img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  background-color: var(--color-blanco);
+  border-radius: var(--radio-borde-chico);
+  transition: transform 0.16s ease;
+}
+
+.lista-muro li strong {
+  overflow-wrap: anywhere;
+  font-size: 0.88rem;
+}
+
+.lista-muro .muro-vacio {
+  grid-column: 1 / -1;
+  display: block;
+  color: var(--color-texto-suave);
+  text-align: center;
+}
+
+.modal-detalle-articulo {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background-color: rgba(59, 46, 32, 0.72);
+}
+
+.detalle-articulo {
+  width: min(100%, 380px);
+  max-height: 92vh;
+  overflow: auto;
+  padding: 20px;
+  border: 3px solid var(--color-mostaza);
+  border-radius: var(--radio-borde);
+  background-color: var(--color-papel);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.detalle-articulo img {
+  width: min(100%, 280px);
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  border-radius: var(--radio-borde-chico);
+  background-color: var(--color-blanco);
+}
+
+.detalle-articulo h2 {
+  margin: 10px 0 6px;
+  font-family: var(--fuente-titulos);
+  color: var(--color-rojo-cereza);
+}
+
+.etiqueta-detalle-articulo {
+  display: inline-block;
+  margin: 12px 0 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: var(--color-verde-menta);
+  color: var(--color-texto);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+@media (min-width: 700px) {
+  .lista-muro {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

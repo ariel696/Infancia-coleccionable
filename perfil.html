@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil - Infancia coleccionable</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=20260925-6">
+</head>
+<body>
+    <header>
+        <h1 id="titulo-perfil">Perfil</h1>
+    </header>
+    <main>
+        <p id="estado-perfil" class="texto-ayuda">Cargando perfil...</p>
+
+        <section id="cabecera-perfil" class="cabecera-perfil oculto" aria-labelledby="nombre-perfil">
+            <img id="foto-perfil" class="foto-perfil" alt="Foto de perfil">
+            <div class="datos-perfil">
+                <h2 id="nombre-perfil"></h2>
+                <p id="descripcion-perfil">Muro de coleccionables y objetos</p>
+                <a id="link-inventario-privado" class="link-perfil oculto" href="coleccion.html">Ver mi inventario</a>
+            </div>
+        </section>
+
+        <section id="controles-perfil" class="controles-perfil oculto" aria-label="Opciones de mi perfil">
+            <label class="boton-secundario selector-foto" for="input-foto-perfil">Cambiar foto</label>
+            <input id="input-foto-perfil" type="file" accept="image/*" class="oculto">
+            <button id="btn-copiar-perfil" class="boton-secundario" type="button">Copiar enlace</button>
+            <p id="estado-foto-perfil" class="texto-ayuda"></p>
+        </section>
+
+        <section class="seccion-muro" aria-labelledby="titulo-muro-coleccionables">
+            <h2 id="titulo-muro-coleccionables">Coleccionables</h2>
+            <ul id="muro-coleccionables" class="lista-muro"></ul>
+        </section>
+
+        <section class="seccion-muro" aria-labelledby="titulo-muro-objetos">
+            <h2 id="titulo-muro-objetos">Objetos</h2>
+            <ul id="muro-inventario" class="lista-muro"></ul>
+        </section>
+
+        <a href="index.html" class="link-volver">&larr; Volver al inicio</a>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="js/perfil.js?v=20260925-2"></script>
+</body>
+</html>
