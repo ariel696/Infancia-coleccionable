@@ -267,9 +267,311 @@ inputArchivoImagen.addEventListener("change", () => {
     });
 });
 
-function subirArchivoACloudinary(archivo, nombreArchivo) {
-  return comprimirImagen(archivo)
-    .catch(() => archivo)
+// -----------------------------------------------------------------
+// 2.4) EDITOR DE IMAGEN: girar con precisión (frente / reverso)
+// -----------------------------------------------------------------
+// Abre una ventana con la imagen y una regla de ángulo (de -180° a
+// 180°, de a medio grado). La vista previa se dibuja en un <canvas>
+// con exactamente el mismo código que después genera la imagen
+// final, así que lo que ves es lo que se guarda. Al aplicar, se
+// sube la imagen girada como una PNG nueva (con esquinas
+// transparentes) y se reemplaza la anterior en el formulario.
+
+// Dibuja "imagen" girada "grados" alrededor de su centro, dentro de
+// un cuadrado de "lado" x "lado" píxeles.
+function dibujarImagenGirada(contexto, imagen, lado, grados) {
+  contexto.clearRect(0, 0, lado, lado);
+  contexto.save();
+  contexto.translate(lado / 2, lado / 2);
+  contexto.rotate((grados * Math.PI) / 180);
+  const escala = lado / Math.max(imagen.naturalWidth, imagen.naturalHeight);
+  const ancho = imagen.naturalWidth * escala;
+  const alto = imagen.naturalHeight * escala;
+  contexto.imageSmoothingQuality = "high";
+  contexto.drawImage(imagen, -ancho / 2, -alto / 2, ancho, alto);
+  contexto.restore();
+}
+
+// Mantiene un ángulo dentro del rango -180..180 (por ejemplo 270 -> -90).
+function normalizarGrados(valor) {
+  return (((valor + 180) % 360) + 360) % 360 - 180;
+}
+
+function abrirEditorImagen(opciones) {
+  const modalAnterior = document.querySelector(".modal-editor-imagen");
+  if (modalAnterior) modalAnterior.remove();
+
+  const modal = document.createElement("div");
+  modal.className = "modal-editor-imagen";
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("aria-modal", "true");
+
+  const panel = document.createElement("div");
+  panel.className = "editor-imagen";
+
+  const titulo = document.createElement("h3");
+  titulo.textContent = opciones.titulo;
+
+  // --- Zona de vista previa (+ imagen de referencia opcional) ---
+  const zona = document.createElement("div");
+  zona.className = "editor-imagen-zona";
+
+  const escenario = document.createElement("div");
+  escenario.className = "editor-imagen-escenario";
+  const lienzo = document.createElement("canvas");
+  lienzo.width = 480;
+  lienzo.height = 480;
+  const guias = document.createElement("div");
+  guias.className = "editor-imagen-guias";
+  escenario.append(lienzo, guias);
+  zona.appendChild(escenario);
+
+  if (opciones.urlReferencia) {
+    const referencia = document.createElement("figure");
+    referencia.className = "editor-imagen-referencia";
+    const marco = document.createElement("div");
+    marco.className = "editor-imagen-marco-referencia";
+    const imagenReferencia = document.createElement("img");
+    imagenReferencia.src = opciones.urlReferencia;
+    imagenReferencia.alt = opciones.etiquetaReferencia || "Referencia";
+    const guiasReferencia = document.createElement("div");
+    guiasReferencia.className = "editor-imagen-guias";
+    marco.append(imagenReferencia, guiasReferencia);
+    const leyenda = document.createElement("figcaption");
+    leyenda.textContent = opciones.etiquetaReferencia || "Referencia";
+    referencia.append(marco, leyenda);
+    zona.appendChild(referencia);
+  }
+
+  // --- Controles de ángulo ---
+  const filaAngulo = document.createElement("div");
+  filaAngulo.className = "editor-imagen-fila-angulo";
+
+  const regla = document.createElement("input");
+  regla.type = "range";
+  regla.min = "-180";
+  regla.max = "180";
+  regla.step = "0.5";
+  regla.value = "0";
+  regla.setAttribute("aria-label", "Ángulo de giro");
+
+  const campoNumero = document.createElement("input");
+  campoNumero.type = "number";
+  campoNumero.min = "-180";
+  campoNumero.max = "180";
+  campoNumero.step = "0.5";
+  campoNumero.value = "0";
+  campoNumero.setAttribute("aria-label", "Ángulo en grados");
+
+  const simboloGrados = document.createElement("span");
+  simboloGrados.textContent = "°";
+
+  filaAngulo.append(regla, campoNumero, simboloGrados);
+
+  const pasos = document.createElement("div");
+  pasos.className = "editor-imagen-pasos";
+
+  const textoEstado = document.createElement("p");
+  textoEstado.className = "texto-ayuda editor-imagen-estado";
+  textoEstado.textContent = "Cargando imagen...";
+
+  const acciones = document.createElement("div");
+  acciones.className = "editor-imagen-acciones";
+
+  const botonRestablecer = document.createElement("button");
+  botonRestablecer.type = "button";
+  botonRestablecer.className = "boton-secundario";
+  botonRestablecer.textContent = "Restablecer";
+
+  const botonCancelar = document.createElement("button");
+  botonCancelar.type = "button";
+  botonCancelar.className = "boton-secundario";
+  botonCancelar.textContent = "Cancelar";
+
+  const botonAplicar = document.createElement("button");
+  botonAplicar.type = "button";
+  botonAplicar.className = "boton-comprar";
+  botonAplicar.textContent = "Aplicar";
+  botonAplicar.disabled = true;
+
+  acciones.append(botonRestablecer, botonCancelar, botonAplicar);
+
+  // --- Estado del editor ---
+  let imagen = null;
+  let grados = 0;
+  let urlTemporal = null;
+  let guardando = false;
+
+  function dibujar() {
+    if (!imagen) return;
+    dibujarImagenGirada(lienzo.getContext("2d"), imagen, lienzo.width, grados);
+  }
+
+  function fijarGrados(valor) {
+    let numero = Number(valor);
+    if (!isFinite(numero)) numero = 0;
+    numero = Math.max(-180, Math.min(180, numero));
+    grados = Math.round(numero * 2) / 2;
+    regla.value = String(grados);
+    campoNumero.value = String(grados);
+    dibujar();
+  }
+
+  [-90, -5, -0.5, 0.5, 5, 90].forEach((paso) => {
+    const boton = document.createElement("button");
+    boton.type = "button";
+    boton.className = "boton-rotar";
+    boton.textContent = (paso > 0 ? "+" : "−") + String(Math.abs(paso)).replace(".", ",") + "°";
+    boton.addEventListener("click", () => fijarGrados(normalizarGrados(grados + paso)));
+    pasos.appendChild(boton);
+  });
+
+  regla.addEventListener("input", () => fijarGrados(regla.value));
+  campoNumero.addEventListener("change", () => fijarGrados(campoNumero.value));
+  botonRestablecer.addEventListener("click", () => fijarGrados(0));
+
+  function cerrar() {
+    document.removeEventListener("keydown", alPresionarTecla);
+    if (urlTemporal) URL.revokeObjectURL(urlTemporal);
+    modal.remove();
+  }
+
+  function alPresionarTecla(evento) {
+    if (evento.key === "Escape" && !guardando) cerrar();
+  }
+
+  botonCancelar.addEventListener("click", () => {
+    if (!guardando) cerrar();
+  });
+  modal.addEventListener("click", (evento) => {
+    if (evento.target === modal && !guardando) cerrar();
+  });
+  document.addEventListener("keydown", alPresionarTecla);
+
+  botonAplicar.addEventListener("click", () => {
+    if (!imagen || guardando) return;
+    if (grados === 0) {
+      cerrar();
+      return;
+    }
+
+    const lado = Math.min(1000, Math.max(imagen.naturalWidth, imagen.naturalHeight));
+    const lienzoFinal = document.createElement("canvas");
+    lienzoFinal.width = lado;
+    lienzoFinal.height = lado;
+    dibujarImagenGirada(lienzoFinal.getContext("2d"), imagen, lado, grados);
+
+    guardando = true;
+    botonAplicar.disabled = true;
+    botonRestablecer.disabled = true;
+    botonCancelar.disabled = true;
+    textoEstado.textContent = "Guardando imagen...";
+
+    lienzoFinal.toBlob((blob) => {
+      if (!blob) {
+        guardando = false;
+        botonAplicar.disabled = false;
+        botonRestablecer.disabled = false;
+        botonCancelar.disabled = false;
+        textoEstado.textContent = "No se pudo generar la imagen. Intenta de nuevo.";
+        return;
+      }
+
+      opciones.alGuardar(blob)
+        .then(() => {
+          guardando = false;
+          cerrar();
+        })
+        .catch((error) => {
+          console.error("Error al guardar la imagen editada:", error.message);
+          guardando = false;
+          botonAplicar.disabled = false;
+          botonRestablecer.disabled = false;
+          botonCancelar.disabled = false;
+          textoEstado.textContent = "No se pudo subir la imagen. Intenta de nuevo.";
+        });
+    }, "image/png");
+  });
+
+  panel.append(titulo, zona, filaAngulo, pasos, textoEstado, acciones);
+  modal.appendChild(panel);
+  document.body.appendChild(modal);
+  botonCancelar.focus();
+
+  // Bajamos la imagen como archivo (blob) para poder dibujarla en el
+  // canvas sin problemas de permisos entre sitios (CORS). "reload"
+  // evita que el navegador reutilice una copia guardada sin esos
+  // permisos.
+  fetch(opciones.url, { mode: "cors", cache: "reload" })
+    .then((respuesta) => {
+      if (!respuesta.ok) throw new Error("Respuesta " + respuesta.status);
+      return respuesta.blob();
+    })
+    .then((blob) => new Promise((resolve, reject) => {
+      urlTemporal = URL.createObjectURL(blob);
+      const imagenCargada = new Image();
+      imagenCargada.onload = () => resolve(imagenCargada);
+      imagenCargada.onerror = () => reject(new Error("No se pudo leer la imagen."));
+      imagenCargada.src = urlTemporal;
+    }))
+    .then((imagenCargada) => {
+      imagen = imagenCargada;
+      botonAplicar.disabled = false;
+      textoEstado.textContent = "Mueve la regla o usa los botones. Las guías rojas marcan el centro.";
+      dibujar();
+    })
+    .catch((error) => {
+      console.error("Error al cargar la imagen para editar:", error.message);
+      textoEstado.textContent = "No se pudo cargar la imagen para editarla.";
+    });
+}
+
+// Crea el botón "✎ Ajustar" que abre el editor para la imagen guardada
+// en "inputUrl". Se oculta solo mientras no haya imagen (ver
+// .preview-opcion.oculto + .boton-editar-imagen en style.css).
+// "obtenerReferencia" es opcional: devuelve { url, etiqueta } de la
+// otra cara del premio para compararlas lado a lado.
+function crearBotonEditarImagen(inputUrl, vistaPrevia, textoEstado, tituloEditor, obtenerReferencia) {
+  const boton = document.createElement("button");
+  boton.type = "button";
+  boton.className = "boton-editar-imagen";
+  boton.textContent = "✎ Ajustar";
+  boton.addEventListener("click", () => {
+    if (!inputUrl.value) return;
+    const referencia = obtenerReferencia ? obtenerReferencia() : null;
+
+    abrirEditorImagen({
+      url: inputUrl.value,
+      titulo: tituloEditor,
+      urlReferencia: referencia && referencia.url ? referencia.url : "",
+      etiquetaReferencia: referencia ? referencia.etiqueta : "",
+      alGuardar: (blob) => {
+        subiendoImagen = true;
+        botonGuardarProducto.disabled = true;
+        return subirArchivoACloudinary(blob, "premio-editado.png", true)
+          .then((urlNueva) => {
+            inputUrl.value = urlNueva;
+            vistaPrevia.src = urlNueva;
+            textoEstado.textContent = "Imagen ajustada. Guarda el producto para aplicar el cambio.";
+          })
+          .finally(() => {
+            subiendoImagen = false;
+            botonGuardarProducto.disabled = false;
+          });
+      }
+    });
+  });
+  return boton;
+}
+
+function subirArchivoACloudinary(archivo, nombreArchivo, sinComprimir) {
+  // "sinComprimir" se usa para las imágenes editadas: se suben tal cual
+  // (PNG con esquinas transparentes) en vez de pasar por el JPEG.
+  const preparada = sinComprimir
+    ? Promise.resolve(archivo)
+    : comprimirImagen(archivo).catch(() => archivo);
+
+  return preparada
     .then((archivoListo) => {
       const datosFormulario = new FormData();
       datosFormulario.append("file", archivoListo, nombreArchivo || "imagen.jpg");
@@ -340,6 +642,90 @@ function agregarFilaPremio(contenedorPremios, premioExistente = {}) {
     previewPremio.classList.remove("oculto");
   }
 
+  const inputNumeroPremio = document.createElement("input");
+  inputNumeroPremio.type = "number";
+  inputNumeroPremio.min = "1";
+  inputNumeroPremio.step = "1";
+  inputNumeroPremio.placeholder = "Número en la colección (ej: 4)";
+  inputNumeroPremio.className = "input-numero-premio";
+  inputNumeroPremio.value = premioExistente.numero || "";
+
+  // --- Imagen trasera opcional del premio ---
+  const inputImagenTraseraPremio = document.createElement("input");
+  inputImagenTraseraPremio.type = "hidden";
+  inputImagenTraseraPremio.className = "input-imagen-trasera-premio";
+  inputImagenTraseraPremio.value = premioExistente.imagenTrasera || "";
+
+  const inputArchivoTraseraPremio = document.createElement("input");
+  inputArchivoTraseraPremio.type = "file";
+  inputArchivoTraseraPremio.accept = "image/*";
+  inputArchivoTraseraPremio.className = "input-archivo-opcion";
+
+  const previewTraseraPremio = document.createElement("img");
+  previewTraseraPremio.className = "preview-opcion oculto";
+  previewTraseraPremio.alt = "Vista previa de la parte trasera del premio";
+  if (premioExistente.imagenTrasera) {
+    previewTraseraPremio.src = premioExistente.imagenTrasera;
+    previewTraseraPremio.classList.remove("oculto");
+  }
+
+  const estadoTraseraPremio = document.createElement("p");
+  estadoTraseraPremio.className = "estado-subida-opcion texto-ayuda";
+  estadoTraseraPremio.textContent = premioExistente.imagenTrasera
+    ? "Imagen trasera actual del premio. Puedes reemplazarla si lo deseas."
+    : "Imagen trasera opcional del premio (se mostrará como reverso).";
+
+  const botonQuitarTraseraPremio = document.createElement("button");
+  botonQuitarTraseraPremio.type = "button";
+  botonQuitarTraseraPremio.textContent = "Quitar trasera";
+  botonQuitarTraseraPremio.className = "boton-quitar-fila";
+  botonQuitarTraseraPremio.classList.toggle("oculto", !premioExistente.imagenTrasera);
+  botonQuitarTraseraPremio.addEventListener("click", () => {
+    inputImagenTraseraPremio.value = "";
+    inputArchivoTraseraPremio.value = "";
+    previewTraseraPremio.classList.add("oculto");
+    botonQuitarTraseraPremio.classList.add("oculto");
+    estadoTraseraPremio.textContent = "Imagen trasera quitada. Guarda el producto para aplicar el cambio.";
+  });
+
+  inputArchivoTraseraPremio.addEventListener("change", () => {
+    const archivoElegido = inputArchivoTraseraPremio.files[0];
+    if (!archivoElegido) return;
+
+    subiendoImagen = true;
+    botonGuardarProducto.disabled = true;
+    estadoTraseraPremio.textContent = "Subiendo imagen trasera del premio...";
+
+    subirArchivoACloudinary(archivoElegido, "premio-coleccionable-trasera.jpg")
+      .then((urlImagen) => {
+        inputImagenTraseraPremio.value = urlImagen;
+        previewTraseraPremio.src = urlImagen;
+        previewTraseraPremio.classList.remove("oculto");
+        botonQuitarTraseraPremio.classList.remove("oculto");
+        estadoTraseraPremio.textContent = "Imagen trasera del premio subida.";
+      })
+      .catch((error) => {
+        console.error("Error al subir imagen trasera del premio:", error.message);
+        inputImagenTraseraPremio.value = "";
+        previewTraseraPremio.classList.add("oculto");
+        botonQuitarTraseraPremio.classList.add("oculto");
+        estadoTraseraPremio.textContent = "No se pudo subir esta imagen. Intenta de nuevo.";
+      })
+      .finally(() => {
+        subiendoImagen = false;
+        botonGuardarProducto.disabled = false;
+      });
+  });
+
+  const filaTraseraPremio = document.createElement("div");
+  filaTraseraPremio.className = "fila-trasera-premio";
+  filaTraseraPremio.appendChild(inputArchivoTraseraPremio);
+  filaTraseraPremio.appendChild(inputImagenTraseraPremio);
+  filaTraseraPremio.appendChild(previewTraseraPremio);
+  filaTraseraPremio.appendChild(crearBotonEditarImagen(inputImagenTraseraPremio, previewTraseraPremio, estadoTraseraPremio, "Ajustar imagen trasera", () => ({ url: inputImagenPremio.value, etiqueta: "Frente" })));
+  filaTraseraPremio.appendChild(estadoTraseraPremio);
+  filaTraseraPremio.appendChild(botonQuitarTraseraPremio);
+
   const estadoPremio = document.createElement("p");
   estadoPremio.className = "estado-subida-opcion texto-ayuda";
   estadoPremio.textContent = premioExistente.imagen
@@ -385,6 +771,9 @@ function agregarFilaPremio(contenedorPremios, premioExistente = {}) {
   filaPremio.appendChild(inputArchivoPremio);
   filaPremio.appendChild(inputImagenPremio);
   filaPremio.appendChild(previewPremio);
+  filaPremio.appendChild(crearBotonEditarImagen(inputImagenPremio, previewPremio, estadoPremio, "Ajustar imagen frontal", () => ({ url: inputImagenTraseraPremio.value, etiqueta: "Reverso" })));
+  filaPremio.appendChild(inputNumeroPremio);
+  filaPremio.appendChild(filaTraseraPremio);
   filaPremio.appendChild(estadoPremio);
   filaPremio.appendChild(botonEliminarPremio);
   contenedorPremios.appendChild(filaPremio);
@@ -568,6 +957,9 @@ function leerOpcionesDelFormulario() {
     if (tipo === "Coleccionable") filasPremio.forEach((filaPremio) => {
       const nombrePremio = filaPremio.querySelector(".input-nombre-premio").value.trim();
       const imagenPremio = filaPremio.querySelector(".input-imagen-premio").value.trim();
+      const numeroTexto = filaPremio.querySelector(".input-numero-premio").value.trim();
+      const imagenTraseraPremio = filaPremio.querySelector(".input-imagen-trasera-premio").value.trim();
+      const numeroPremio = Number(numeroTexto);
 
       if (nombrePremio === "") {
         if (imagenPremio !== "") {
@@ -576,12 +968,21 @@ function leerOpcionesDelFormulario() {
         return;
       }
 
-      premios.push({
+      // El número es opcional, pero si se escribe debe ser un entero >= 1.
+      if (numeroTexto !== "" && (!Number.isInteger(numeroPremio) || numeroPremio < 1)) {
+        filaIncompleta = true;
+        return;
+      }
+
+      const premio = {
         id: generarId(nombrePremio),
         nombre: nombrePremio,
         tipo: "Coleccionable",
         imagen: imagenPremio
-      });
+      };
+      if (numeroTexto !== "") premio.numero = numeroPremio;
+      if (imagenTraseraPremio !== "") premio.imagenTrasera = imagenTraseraPremio;
+      premios.push(premio);
     });
 
     opciones.push({
@@ -624,7 +1025,7 @@ formNuevoProducto.addEventListener("submit", (evento) => {
   const opciones = leerOpcionesDelFormulario();
 
   if (opciones === null) {
-    alert("Completá cada producto con nombre y precio antes de guardar.");
+    alert("Completá cada producto con nombre y precio, y revisá que el número de cada premio sea un entero mayor a 0.");
     return;
   }
 

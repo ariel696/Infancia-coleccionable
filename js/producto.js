@@ -181,6 +181,8 @@ function elegirColeccionableAleatorio(opcion) {
     nombre: premio.nombre,
     tipo: premio.tipo || "Coleccionable",
     imagen: premio.imagen || "",
+    ...(premio.numero ? { numero: premio.numero } : {}),
+    ...(premio.imagenTrasera ? { imagenTrasera: premio.imagenTrasera } : {}),
     origenTiendaId: idProducto,
     origenProductoId: opcion.id,
     origenProductoNombre: opcion.nombre,
@@ -228,6 +230,92 @@ function crearArticuloComprado(opcion, tipo) {
   };
 }
 
+// Crea el botón "Ver reverso" para alternar entre la imagen frontal y la
+// trasera de un artículo. Devuelve null si el artículo no tiene trasera.
+function crearBotonReverso(imagen, articulo, imagenFrontal) {
+  if (!articulo.imagenTrasera) return null;
+
+  // Precarga la trasera para que el giro no parpadee.
+  new Image().src = articulo.imagenTrasera;
+
+  let mostrandoReverso = false;
+  let girando = false;
+  const boton = document.createElement("button");
+  boton.type = "button";
+  boton.className = "boton-reverso";
+  boton.textContent = "Ver reverso";
+
+  function aplicarCara() {
+    imagen.src = mostrandoReverso ? articulo.imagenTrasera : imagenFrontal;
+    boton.textContent = mostrandoReverso ? "Ver frente" : "Ver reverso";
+  }
+
+  imagen.addEventListener("error", () => {
+    if (mostrandoReverso) {
+      mostrandoReverso = false;
+      aplicarCara();
+    }
+  });
+
+  function alternarCara() {
+    if (girando) return;
+    mostrandoReverso = !mostrandoReverso;
+
+    const sinAnimacion = !imagen.animate
+      || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (sinAnimacion) {
+      aplicarCara();
+      return;
+    }
+
+    // Giro en 3D: la imagen gira hasta quedar de canto (90°),
+    // cambia de cara y termina de girar hasta quedar de frente.
+    girando = true;
+    const ida = imagen.animate(
+      [
+        { transform: "perspective(700px) rotateY(0deg)" },
+        { transform: "perspective(700px) rotateY(90deg)" }
+      ],
+      { duration: 180, easing: "ease-in", fill: "forwards" }
+    );
+    ida.onfinish = () => {
+      aplicarCara();
+      const vuelta = imagen.animate(
+        [
+          { transform: "perspective(700px) rotateY(-90deg)" },
+          { transform: "perspective(700px) rotateY(0deg)" }
+        ],
+        { duration: 220, easing: "ease-out" }
+      );
+      ida.cancel();
+      vuelta.onfinish = () => { girando = false; };
+    };
+  }
+
+  boton.addEventListener("click", (evento) => {
+    evento.stopPropagation();
+    alternarCara();
+  });
+
+  // Tocar la imagen también la voltea (con teclado: Enter o Espacio).
+  imagen.classList.add("imagen-girable");
+  imagen.setAttribute("role", "button");
+  imagen.setAttribute("tabindex", "0");
+  imagen.title = "Toca para voltear";
+  imagen.addEventListener("click", (evento) => {
+    evento.stopPropagation();
+    alternarCara();
+  });
+  imagen.addEventListener("keydown", (evento) => {
+    if (evento.key === "Enter" || evento.key === " ") {
+      evento.preventDefault();
+      alternarCara();
+    }
+  });
+
+  return boton;
+}
+
 function mostrarCompraConfirmada(articuloComprado, coleccionablesGanados, tipoArticulo) {
   const modalExistente = document.querySelector(".modal-premio");
   if (modalExistente) {
@@ -267,6 +355,18 @@ function mostrarCompraConfirmada(articuloComprado, coleccionablesGanados, tipoAr
 
     tarjeta.appendChild(imagen);
     tarjeta.appendChild(nombre);
+
+    const botonReverso = crearBotonReverso(imagen, coleccionable, imagen.src);
+    if (botonReverso) tarjeta.appendChild(botonReverso);
+
+    // Si el premio tiene número de colección, se muestra bajo el nombre.
+    if (coleccionable.numero) {
+      const numero = document.createElement("span");
+      numero.className = "numero-tazo-premio";
+      numero.textContent = "#" + coleccionable.numero;
+      tarjeta.appendChild(numero);
+    }
+
     grilla.appendChild(tarjeta);
   });
 
