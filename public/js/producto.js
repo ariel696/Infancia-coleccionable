@@ -446,7 +446,7 @@ function dibujarOpciones(opciones, referenciaUsuario) {
 
     const precioElemento = document.createElement("p");
     precioElemento.className = "precio-opcion";
-    precioElemento.textContent = opcion.precio + " monedas";
+    precioElemento.textContent = Moneda.formatearPesos(opcion.precio);
 
     const botonComprar = document.createElement("button");
     botonComprar.className = "boton-comprar";
@@ -472,7 +472,7 @@ function comprarOpcion(referenciaUsuario, opcion) {
     const monedasActuales = datos.monedas;
 
     if (monedasActuales < opcion.precio) {
-      alert("Todavía no tienes monedas suficientes para esta opción.");
+      alert("Todavía no tienes dinero suficiente para esta opción.");
       return;
     }
 
@@ -521,7 +521,7 @@ function comprarOpcion(referenciaUsuario, opcion) {
 // 6) FUNCIÓN: mostrar el texto de monedas disponibles
 // -----------------------------------------------------------------
 function mostrarMonedasDisponibles(cantidad) {
-  parrafoMonedasDisponibles.textContent = "Tienes " + cantidad + " monedas disponibles.";
+  parrafoMonedasDisponibles.textContent = "Tienes " + Moneda.formatearPesos(cantidad) + " disponibles.";
 }
 
 // -----------------------------------------------------------------
@@ -574,4 +574,9 @@ if (!idProducto) {
       window.location.href = "index.html";
     }
   });
+}
+
+// Monedas y billetes que existen en la página (solo informativo).
+if (document.getElementById("denominaciones-producto")) {
+  Moneda.pintarDenominaciones(document.getElementById("denominaciones-producto"));
 }

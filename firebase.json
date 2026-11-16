@@ -4,7 +4,7 @@
   },
   "hosting": {
     "target": "principal",
-    "public": ".",
+    "public": "public",
     "ignore": [
       "firebase.json",
       "firestore.rules",

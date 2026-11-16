@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuario root - Infancia coleccionable</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=20260925-17">
+</head>
+<body>
+    <!--
+      Página del USUARIO ROOT (solo para la cuenta administradora).
+      Aquí vive todo lo que solo tú puedes hacer en el sitio:
+      herramientas de administración y el administrador de assets.
+      Para agregar nuevas herramientas root, súmalas dentro de
+      #panel-root. La protección real está en las reglas de Firestore;
+      esta página solo oculta el contenido a quien no es admin.
+    -->
+    <header>
+        <h1>Usuario root</h1>
+    </header>
+    <main>
+        <a href="index.html" class="link-volver">&larr; Volver al inicio</a>
+
+        <p id="root-sin-permiso" class="texto-ayuda">
+            Esta sección es solo para la cuenta administradora.
+            <a href="index.html">Vuelve al inicio</a> e inicia sesión con esa cuenta.
+        </p>
+
+        <div id="panel-root" class="oculto">
+            <h2>Herramientas</h2>
+            <div class="herramientas-root">
+                <a href="admin.html">Administrar lugares y productos<span>Agrega o edita tiendas, productos, precios y premios.</span></a>
+            </div>
+
+            <section id="info-assets" class="oculto" aria-label="Administrador de assets del sitio">
+                <h2>Mis assets (imágenes del sitio)</h2>
+                <p>Aquí guardas ordenadas las imágenes que usa la página (billetes, monedas, fondos, íconos...). Para usar una en cualquier parte, toca <strong>Copiar enlace</strong>.</p>
+
+                <div class="assets-form">
+                    <label for="assets-archivo">Imagen</label>
+                    <input type="file" id="assets-archivo" accept="image/*">
+                    <label for="assets-nombre">Nombre</label>
+                    <input type="text" id="assets-nombre" maxlength="60" placeholder="Ej: Billete de 1.000 pesos (frente)">
+                    <label for="assets-categoria">Categoría</label>
+                    <select id="assets-categoria"></select>
+                    <button type="button" id="assets-subir" class="boton-comprar">Subir imagen</button>
+                    <p id="assets-estado" class="texto-ayuda"></p>
+                </div>
+
+                <h3>Mis imágenes <span id="assets-contador"></span></h3>
+                <div class="assets-filtros">
+                    <select id="assets-filtro" aria-label="Filtrar por categoría"></select>
+                    <input type="search" id="assets-buscar" placeholder="Buscar por nombre..." aria-label="Buscar por nombre">
+                </div>
+                <div id="assets-lista"></div>
+
+                <h3>Imágenes que ya usa el sitio</h3>
+                <p class="texto-ayuda">Se leen solas desde tus tiendas, productos y premios, y desde la carpeta <code>img</code>. Aquí solo las ves y copias su enlace, o las guardas en «Mis imágenes». Para cambiarlas, edítalas en <a href="admin.html">Administrar lugares</a>.</p>
+                <div id="assets-en-uso"></div>
+            </section>
+        </div>
+
+        <a href="index.html" class="link-volver">&larr; Volver al inicio</a>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="js/assets.js?v=20260925-3"></script>
+</body>
+</html>

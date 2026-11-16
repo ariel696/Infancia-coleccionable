@@ -62,7 +62,7 @@
       unos milisegundos, pero en celulares con internet lenta se nota.
     -->
 
-    <link rel="stylesheet" href="css/style.css?v=20260925-5">
+    <link rel="stylesheet" href="css/style.css?v=20260925-17">
     <!--
       Conecta este HTML con nuestra hoja de estilos externa.
       - rel="stylesheet" -> le dice al navegador "esto es CSS".
@@ -95,6 +95,8 @@
           encabezado de la página". Aquí suele ir el logo o el nombre del sitio.
         -->
 
+        <a href="root.html" id="link-root" class="oculto">Usuario root</a>
+
         <a href="perfil.html" id="link-mi-coleccion" class="oculto">Mi perfil</a>
         <!--
           Movido acá desde "grupo-acciones": ahora funciona como un
@@ -111,6 +113,15 @@
           Regla de oro: solo debe existir un título de este nivel por página
           completa, porque representa el título principal (también ayuda
           al SEO, es decir, a que Google entienda de qué trata tu sitio).
+        -->
+        <a href="intercambios.html" id="link-intercambios" class="oculto">Intercambios</a>
+        <p id="monedas-usuario"></p>
+        <!--
+          Movido acá desde la zona del "hero": ahora el contador de
+          dinero vive en el encabezado, entre el título y el botón
+          "Mi perfil". Sigue siendo el mismo elemento (mismo id), así
+          que script.js no cambia: lo llena y lo vacía igual que antes.
+          Mientras esté vacío, el CSS lo oculta.
         -->
     </header>
 
@@ -161,67 +172,23 @@
                 -->
 
                 <!--
-                  Botón ilustrado del regalo diario: una mano ofreciendo
-                  monedas. Es puramente decorativo/visual, así que le
-                  ponemos aria-hidden="true" al SVG de adentro (para que
-                  los lectores de pantalla no lo lean) y dejamos el texto
-                  accesible en el aria-label del botón. Al apretarlo hace
-                  EXACTAMENTE lo mismo que "Agarrar dinero diario": ambos
-                  botones llaman a la misma función agarrarDineroDiario()
-                  desde script.js, así que cobran el mismo dinero.
+                  Botón ilustrado del regalo diario: 3 monedas de 100
+                  pesos chilenos (dos con la cara "100" y una con el
+                  escudo). Es puramente visual, así que las imágenes van
+                  con alt="" y aria-hidden="true" (los lectores de pantalla
+                  no las leen) y el texto accesible queda en el aria-label
+                  del botón. Al apretarlo hace EXACTAMENTE lo mismo que
+                  "Reclamar dinero diario": ambos llaman a la misma función
+                  agarrarDineroDiario() en script.js, así que cobran lo
+                  mismo. Las fotos están en img/.
                 -->
                 <button id="btn-regalo-diario" class="oculto btn-regalo-diario" type="button" aria-label="Reclamar dinero diario">
-                    <svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                        <!-- Sombra ovalada bajo la mano, para dar sensación de apoyo -->
-                        <ellipse cx="100" cy="148" rx="70" ry="8" fill="#3B2E20" opacity="0.12"/>
-
-                        <!-- Antebrazo -->
-                        <path d="M60 160 L60 118 Q60 100 82 96 L146 92 Q166 91 166 112 L166 160 Z" fill="#E8B48A"/>
-
-                        <!-- Palma de la mano, abierta hacia arriba -->
-                        <path d="M40 118
-                                 Q34 84 62 70
-                                 Q80 61 96 66
-                                 Q104 50 122 54
-                                 Q138 57 138 74
-                                 Q154 72 160 88
-                                 Q166 104 154 116
-                                 Q150 132 128 136
-                                 L64 136
-                                 Q42 134 40 118 Z"
-                              fill="#F0C39B" stroke="#3B2E20" stroke-width="3" stroke-linejoin="round"/>
-
-                        <!-- Líneas de los dedos, apenas insinuadas -->
-                        <path d="M70 78 Q64 64 70 50" fill="none" stroke="#3B2E20" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
-                        <path d="M96 66 Q92 50 98 36" fill="none" stroke="#3B2E20" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
-                        <path d="M122 54 Q120 38 128 26" fill="none" stroke="#3B2E20" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
-                        <path d="M138 74 Q142 60 154 52" fill="none" stroke="#3B2E20" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
-
-                        <!-- Pila de monedas doradas sobre la palma -->
-                        <circle cx="88" cy="104" r="19" fill="#E6A93B" stroke="#3B2E20" stroke-width="3"/>
-                        <circle cx="88" cy="104" r="11" fill="none" stroke="#C88A22" stroke-width="2"/>
-                        <circle cx="118" cy="98" r="19" fill="#E6A93B" stroke="#3B2E20" stroke-width="3"/>
-                        <circle cx="118" cy="98" r="11" fill="none" stroke="#C88A22" stroke-width="2"/>
-                        <circle cx="103" cy="80" r="19" fill="#F3C766" stroke="#3B2E20" stroke-width="3"/>
-                        <circle cx="103" cy="80" r="11" fill="none" stroke="#C88A22" stroke-width="2"/>
-                        <text x="103" y="86" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="800" fill="#3B2E20">$</text>
-
-                        <!-- Brillitos alrededor, para dar sensación de "regalo" -->
-                        <path d="M150 40 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 l10 -4 Z" fill="#F3C766"/>
-                        <path d="M46 56 l3 7 l7 3 l-7 3 l-3 7 l-3 -7 l-7 -3 l7 -3 Z" fill="#F3C766"/>
-                    </svg>
+                    <img class="moneda-regalo moneda-regalo-izq" src="img/moneda-100-escudo.png" alt="" aria-hidden="true" draggable="false">
+                    <img class="moneda-regalo moneda-regalo-der" src="img/moneda-100-cien.png" alt="" aria-hidden="true" draggable="false">
+                    <img class="moneda-regalo moneda-regalo-arriba" src="img/moneda-100-cien.png" alt="" aria-hidden="true" draggable="false">
                 </button>
                 <button id="btn-dinero-diario" class="oculto" type="button">Reclamar dinero diario</button>
                 <p id="estado-dinero-diario" class="texto-ayuda"></p>
-
-                <p id="monedas-usuario"></p>
-                <!--
-                  Nuevo párrafo, también vacío a propósito. Acá vamos a
-                  mostrar cuántas monedas virtuales tiene el usuario, algo
-                  como "Monedas: 500". Solo va a tener contenido cuando haya
-                  alguien logeado, porque solo ahí tiene sentido hablar de
-                  "sus" monedas.
-                -->
             </div>
 
             <div class="grupo-acciones">
@@ -366,10 +333,12 @@
                 <li><strong>Firestore:</strong> colección <code>productos</code>, con <code>nombre</code>, <code>imagen</code> y array <code>opciones</code> con <code>id</code>, <code>nombre</code> y <code>precio</code>.</li>
                 <li><strong>Cloudinary:</strong> el admin sube imágenes de productos desde <code>admin.html</code>; la URL pública queda guardada en <code>productos.imagen</code>.</li>
                 <li><strong>Páginas clave:</strong> <code>index.html</code> maneja sesión y monedas, <code>tienda.html</code> lista productos, <code>producto.html</code> compra opciones, <code>coleccion.html</code> muestra la colección y <code>admin.html</code> administra productos.</li>
+                <li><strong>Assets:</strong> colección Firestore <code>assets</code> (<code>nombre</code>, <code>categoria</code>, <code>url</code>); las imágenes se suben a Cloudinary desde la sección "Mis assets" de <code>root.html</code> (botón "Usuario root" del encabezado; <code>js/assets.js</code>). Borrar un asset solo quita el registro, la imagen queda en Cloudinary.</li>
                 <li><strong>Reglas importantes:</strong> la seguridad real debe vivir en reglas de Firestore; ocultar botones en el frontend solo mejora la experiencia, no protege datos.</li>
                 <li><strong>Para IA futura:</strong> mantener sincronizado <code>EMAIL_ADMIN</code> entre <code>js/script.js</code> y <code>js/admin.js</code>, y evitar guardar productos sin imagen.</li>
             </ul>
         </section>
+
         <!--
           &copy; es una "entidad HTML" (un código especial) que el
           navegador convierte en el símbolo ©. Existen muchas entidades
@@ -409,7 +378,7 @@
       fallaría con un error de "firebase no está definido".
     -->
 
-    <script src="js/script.js?v=20260925-5"></script>
+    <script src="js/script.js?v=20260925-7"></script>
     <!--
       Conecta este HTML con nuestro archivo de JavaScript externo.
 

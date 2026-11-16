@@ -1928,3 +1928,732 @@ footer {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
+
+
+/* =================================================================
+   12) TOQUE AÑOS 2000 (Web 2.0 / Y2K)
+   -----------------------------------------------------------------
+   Esta sección va AL FINAL a propósito: pisa lo de arriba sin
+   borrarlo. Si algún día querés volver al look anterior, basta con
+   borrar todo desde este comentario hacia abajo.
+
+   Ingredientes de la época:
+   - Botones "gel" brillantes (degradé con corte duro al medio)
+   - Tarjeta de saldo como ventana de computador ("Mi monedero.exe")
+   - Fondo de puntitos, bordes biselados y sombras "3D" duras
+   - Tipografía Verdana/Trebuchet en el texto
+   - Contador de monedas con pantalla LCD verde
+   ================================================================= */
+
+:root {
+  --fuente-texto: Verdana, Tahoma, "Trebuchet MS", sans-serif;
+  --radio-borde: 12px;
+  --radio-borde-chico: 8px;
+  --sombra-tarjeta: inset 0 1px 0 #fff, 0 3px 0 var(--color-mostaza-oscuro), 0 8px 12px rgba(59, 46, 32, 0.22);
+  --brillo-superior: inset 0 1px 0 rgba(255, 255, 255, 0.65), inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+}
+
+::selection {
+  background: var(--color-rojo-cereza);
+  color: var(--color-blanco);
+}
+
+:focus-visible {
+  outline: 3px dotted var(--color-verde-menta-oscuro);
+  outline-offset: 3px;
+}
+
+/* ---- Fondo: papel con puntitos ---- */
+body {
+  background-color: var(--color-crema);
+  background-image:
+    radial-gradient(circle, rgba(230, 169, 59, 0.38) 1.6px, transparent 2px),
+    radial-gradient(circle, rgba(111, 198, 163, 0.28) 1.6px, transparent 2px);
+  background-size: 22px 22px, 22px 22px;
+  background-position: 0 0, 11px 11px;
+  font-size: 0.94rem;
+}
+
+/* ---- Encabezado: barra brillante con título "WordArt" ---- */
+header {
+  background-color: var(--color-mostaza);
+  background-image: linear-gradient(
+    to bottom,
+    #FFE08F 0%,
+    #F6C255 47%,
+    #E6A93B 50%,
+    #D58D1C 100%
+  );
+  border-bottom: 5px solid var(--color-rojo-cereza);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.7), 0 4px 0 #A2321F, 0 8px 14px rgba(59, 46, 32, 0.3);
+  margin-bottom: 6px;
+}
+
+header h1 {
+  color: #FFFFFF;
+  letter-spacing: 1px;
+  /* Contorno marrón con sombras múltiples (efecto WordArt) */
+  text-shadow:
+    -2px -2px 0 #3B2E20, 2px -2px 0 #3B2E20,
+    -2px 2px 0 #3B2E20, 2px 2px 0 #3B2E20,
+    0 -2px 0 #3B2E20, 0 2px 0 #3B2E20,
+    -2px 0 0 #3B2E20, 2px 0 0 #3B2E20,
+    0 5px 0 #A2321F, 0 7px 6px rgba(0, 0, 0, 0.35);
+}
+
+header h1::before,
+header h1::after {
+  content: "\2605"; /* ★ */
+  display: none; /* en celular el título va en 2 líneas: sin estrellas */
+  margin: 0 8px;
+  color: #FFF3B0;
+  font-size: 0.7em;
+  vertical-align: 0.12em;
+  text-shadow: 0 0 6px #FFFFFF, 0 2px 0 #A2321F;
+}
+
+/* ---- Botones "gel" ---- */
+#btn-accion-principal,
+#btn-dinero-diario,
+header #link-mi-coleccion,
+.boton-comprar,
+#btn-recargar-monedas {
+  border-radius: 999px;
+  border: 1px solid rgba(59, 46, 32, 0.55);
+  box-shadow: var(--brillo-superior), 0 3px 0 rgba(59, 46, 32, 0.35), 0 5px 8px rgba(59, 46, 32, 0.25);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.2px;
+}
+
+#btn-accion-principal,
+.boton-comprar {
+  background-image: linear-gradient(to bottom, #F58A74 0%, #DC4A33 48%, #B8301D 52%, #CF4630 100%);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.45);
+  border-color: #7E2013;
+}
+
+#btn-dinero-diario {
+  background-image: linear-gradient(to bottom, #FFE9A6 0%, #F3C355 48%, #DD9C22 52%, #EDB43F 100%);
+  border-color: #8A5E10;
+}
+
+header #link-mi-coleccion,
+#btn-recargar-monedas {
+  background-image: linear-gradient(to bottom, #C7F5E2 0%, #7ED3AE 48%, #4FA382 52%, #6BBF9C 100%);
+  border-color: #2F6E55;
+  color: var(--color-texto);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+#btn-recargar-monedas {
+  color: #FFFFFF;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
+}
+
+#btn-accion-principal:active,
+#btn-dinero-diario:not(:disabled):active,
+.boton-comprar:active,
+#btn-recargar-monedas:active {
+  transform: translateY(3px);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.35), 0 0 0 rgba(0, 0, 0, 0);
+}
+
+/* Botones chicos tipo "píldora" (reverso, ajustar, etc.) */
+.boton-reverso,
+.boton-editar-imagen,
+.boton-rotar {
+  background-image: linear-gradient(to bottom, #FFFFFF 0%, #F3E9CF 50%, #E8D9B3 52%, #F5EBD0 100%);
+  box-shadow: var(--brillo-superior), 0 2px 0 rgba(59, 46, 32, 0.3);
+}
+
+.boton-reverso:hover,
+.boton-reverso:focus-visible {
+  background-image: linear-gradient(to bottom, #FFE9A6 0%, #F3C355 50%, #DD9C22 52%, #EDB43F 100%);
+}
+
+/* ---- Tarjeta de saldo = ventana de computador ---- */
+.tarjeta-saldo {
+  position: relative;
+  padding-top: 0;
+  border: 2px solid #8A5E10;
+  border-radius: 10px 10px 8px 8px;
+  background-image: linear-gradient(to bottom, #FFFFFF 0%, var(--color-papel) 60%);
+  box-shadow: var(--sombra-tarjeta);
+  overflow: hidden;
+}
+
+.tarjeta-saldo::before {
+  content: "\1F4B0  Mi monedero.exe";
+  align-self: stretch;
+  margin: 0 -16px 6px;
+  padding: 7px 96px 7px 12px;
+  color: #FFFFFF;
+  font-family: var(--fuente-texto);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+  background-image: linear-gradient(to bottom, #8FD9BB 0%, #4FA382 48%, #3A8A6B 52%, #4FA382 100%);
+  border-bottom: 2px solid #2F6E55;
+}
+
+/* Botoncitos de la ventana: minimizar, maximizar, cerrar (decorativos) */
+.tarjeta-saldo::after {
+  content: "\2013\00a0\00a0\25A1\00a0\00a0\2715";
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  padding: 0 8px;
+  color: var(--color-texto);
+  font-family: var(--fuente-texto);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 2px;
+  white-space: pre;
+  background-image: linear-gradient(to bottom, #FFFFFF, #E5E5E5);
+  border: 1px solid #2F6E55;
+  border-radius: 5px;
+  pointer-events: none;
+}
+
+.tarjeta-saldo > * {
+  margin-left: 0;
+}
+
+/* ---- Contador de monedas: pantalla LCD ---- */
+#monedas-usuario,
+#monedas-disponibles {
+  background-color: #1B2A1D;
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%);
+  border: 3px solid #5A4A38;
+  border-radius: 6px;
+  color: #A6FF8A;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: 700;
+  text-shadow: 0 0 6px rgba(166, 255, 138, 0.7);
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.7), 0 1px 0 #FFFFFF;
+}
+
+/* ---- Tarjetas y listas: biselado + sombra dura ---- */
+.tarjeta-producto,
+.tarjeta-lugar-compra,
+.lista-muro li,
+#lista-coleccionables li,
+#lista-inventario li,
+#escena-recompensa,
+.bloque-admin,
+.panel-notas-root {
+  background-image: linear-gradient(to bottom, #FFFFFF 0%, var(--color-papel) 70%);
+  box-shadow: var(--sombra-tarjeta);
+}
+
+.tarjeta-producto,
+.tarjeta-lugar-compra {
+  border-radius: 14px;
+}
+
+.tarjeta-producto:hover,
+.tarjeta-lugar-compra:hover {
+  transform: translateY(-3px);
+  box-shadow: inset 0 1px 0 #fff, 0 6px 0 var(--color-mostaza-oscuro), 0 12px 16px rgba(59, 46, 32, 0.25);
+}
+
+.nombre-producto,
+.tarjeta-lugar-compra span {
+  text-shadow: 1px 1px 0 #FFFFFF;
+}
+
+.imagen-coleccionable,
+.foto-perfil {
+  box-shadow: 0 0 0 3px #FFFFFF, 0 0 0 5px var(--color-mostaza), 0 4px 8px rgba(59, 46, 32, 0.3);
+}
+
+.etiqueta-detalle-articulo {
+  background-image: linear-gradient(to bottom, #C7F5E2 0%, #7ED3AE 48%, #4FA382 52%, #6BBF9C 100%);
+  border: 1px solid #2F6E55;
+  box-shadow: var(--brillo-superior);
+}
+
+/* ---- Títulos en relieve ---- */
+main h1,
+.modal-premio-contenido h2,
+.modal-lugares-contenido h2,
+.detalle-articulo h2 {
+  text-shadow: 1px 1px 0 #FFFFFF, 2px 2px 0 rgba(198, 64, 46, 0.25);
+}
+
+/* ---- Campos de texto "hundidos" ---- */
+#input-recarga-monedas,
+#form-nuevo-producto input[type="text"],
+#form-nuevo-producto input[type="number"] {
+  border-radius: 6px;
+  box-shadow: inset 2px 2px 4px rgba(59, 46, 32, 0.25), 0 1px 0 #FFFFFF;
+}
+
+.panel-recarga-root {
+  background-image: linear-gradient(to bottom, #FFFFFF 0%, var(--color-papel) 80%);
+  border-radius: 10px;
+}
+
+/* ---- Ventanas emergentes (modales) ---- */
+.modal-premio-contenido,
+.modal-lugares-contenido,
+.detalle-articulo,
+.editor-imagen {
+  background-image: linear-gradient(to bottom, #FFFFFF 0%, var(--color-papel) 40%);
+  border: 3px solid #8A5E10;
+  box-shadow: 0 0 0 3px #FFFFFF, 0 0 0 6px var(--color-mostaza), 0 16px 30px rgba(59, 46, 32, 0.45);
+}
+
+.modal-premio,
+.modal-lugares,
+.modal-detalle-articulo,
+.modal-editor-imagen {
+  /* velo con trama fina, como los fondos de diálogo de la época */
+  background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.12) 0 2px, transparent 2px 6px);
+}
+
+.btn-cerrar-modal {
+  background-image: linear-gradient(to bottom, #F58A74 0%, #DC4A33 48%, #B8301D 52%, #CF4630 100%);
+  border: 1px solid #7E2013;
+  border-radius: 6px;
+  color: #FFFFFF;
+  box-shadow: var(--brillo-superior);
+}
+
+/* ---- Pie de página ---- */
+footer {
+  font-family: var(--fuente-texto);
+}
+
+footer::after {
+  content: "Mejor visto en 1024 \00d7 768 con Internet Explorer 6";
+  display: block;
+  margin-top: 6px;
+  color: var(--color-texto-suave);
+  font-size: 0.7rem;
+  font-style: italic;
+}
+
+/* Respeta a quienes pidieron menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
+@media (min-width: 700px) {
+  header h1::before,
+  header h1::after {
+    display: inline-block;
+  }
+}
+
+
+/* ---- Perfil: botón de engranaje y panel "Mi cuenta" ---- */
+.cabecera-perfil {
+  position: relative;
+}
+
+.cabecera-perfil .datos-perfil {
+  padding-right: 54px;
+}
+
+.boton-ajustes {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 2px solid #8A5E10;
+  border-radius: 50%;
+  background-image: linear-gradient(to bottom, #FFFFFF 0%, var(--color-papel) 45%, #F3D9A0 100%);
+  color: var(--color-texto);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--brillo-superior), 0 2px 5px rgba(59, 46, 32, 0.3);
+  transition: transform 0.4s ease;
+}
+
+.boton-ajustes:hover,
+.boton-ajustes:focus-visible {
+  transform: rotate(60deg);
+  outline: 3px solid var(--color-verde-menta);
+  outline-offset: 2px;
+}
+
+.boton-ajustes.oculto {
+  display: none;
+}
+
+.detalle-ajustes {
+  text-align: left;
+}
+
+.detalle-ajustes h2 {
+  margin-top: 8px;
+}
+
+.lista-ajustes {
+  margin: 12px 0;
+}
+
+.fila-ajuste {
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--color-mostaza);
+}
+
+.fila-ajuste dt {
+  color: var(--color-texto-suave);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.fila-ajuste dd {
+  margin: 2px 0 0;
+  color: var(--color-texto);
+  font-weight: 600;
+  word-break: break-word;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boton-ajustes:hover,
+  .boton-ajustes:focus-visible {
+    transform: none;
+  }
+}
+
+
+/* ---- Dinero del usuario dentro del encabezado ----
+   Entre el título y el botón "Mi perfil".
+   - Celular y pantallas medianas: debajo del título, centrado.
+   - Pantallas anchas (1000px o más): en la misma fila, entre el
+     título y "Mi perfil". */
+header #monedas-usuario {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  justify-self: center;
+  align-self: center;
+  margin: 0;
+  padding: 4px 12px;
+  border-width: 2px;
+  font-size: 0.85rem;
+}
+
+header #monedas-usuario:not(:empty) {
+  display: inline-block;
+  margin: 12px 0 0;
+}
+
+@media (min-width: 1000px) {
+  header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    column-gap: 0;
+    padding: 20px 24px;
+  }
+
+  header h1 {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  header #monedas-usuario {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  header #monedas-usuario:not(:empty) {
+    margin: 0 18px 0 0;
+  }
+
+  header #link-mi-coleccion {
+    position: static;
+    grid-column: 3;
+    grid-row: 1;
+    top: auto;
+    right: auto;
+    transform: none;
+  }
+
+  header #link-mi-coleccion:hover {
+    transform: scale(1.04);
+  }
+}
+
+
+/* ---- Botón de regalo diario: 3 monedas de 100 pesos ---- */
+.btn-regalo-diario {
+  position: relative;
+  width: 176px;
+  height: 142px;
+  padding: 0;
+}
+
+.moneda-regalo {
+  position: absolute;
+  width: 84px;
+  height: 84px;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 3px 2px rgba(59, 46, 32, 0.4));
+  transition: transform 0.2s ease;
+}
+
+.moneda-regalo-izq {
+  left: 10px;
+  bottom: 6px;
+  transform: rotate(-12deg);
+}
+
+.moneda-regalo-der {
+  right: 10px;
+  bottom: 10px;
+  transform: rotate(9deg);
+}
+
+.moneda-regalo-arriba {
+  left: 50%;
+  top: 4px;
+  margin-left: -42px;
+  transform: rotate(-4deg);
+  z-index: 1;
+}
+
+.btn-regalo-diario:not(:disabled):hover .moneda-regalo-izq {
+  transform: rotate(-16deg) translateY(-3px);
+}
+
+.btn-regalo-diario:not(:disabled):hover .moneda-regalo-der {
+  transform: rotate(13deg) translateY(-3px);
+}
+
+.btn-regalo-diario:not(:disabled):hover .moneda-regalo-arriba {
+  transform: rotate(2deg) translateY(-6px);
+}
+
+.btn-regalo-diario:focus-visible {
+  outline: 3px solid var(--color-verde-menta);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moneda-regalo {
+    transition: none;
+  }
+}
+
+
+/* ---- Botón "Intercambios" en el encabezado ---- */
+header #link-intercambios {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  min-height: 0;
+  margin: 12px 8px 0 0;
+  padding: 6px 16px;
+  border: 1px solid #7E2013;
+  border-radius: 999px;
+  background-image: linear-gradient(to bottom, #F58A74 0%, #DC4A33 48%, #B8301D 52%, #CF4630 100%);
+  color: #FFFFFF;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.45);
+  box-shadow: var(--brillo-superior), 0 3px 0 rgba(59, 46, 32, 0.35), 0 5px 8px rgba(59, 46, 32, 0.25);
+}
+
+header #link-intercambios.oculto { display: none; }
+header #link-intercambios:hover { filter: brightness(1.08); }
+header #link-intercambios:not(.oculto) ~ #monedas-usuario { grid-row: 3; }
+
+@media (min-width: 1000px) {
+  header { grid-template-columns: minmax(0, 1fr) auto auto auto; }
+  header #link-intercambios { grid-column: 2; grid-row: 1; justify-self: end; margin: 0 14px 0 0; }
+  header #monedas-usuario,
+  header #link-intercambios:not(.oculto) ~ #monedas-usuario { grid-column: 3; grid-row: 1; }
+  header #link-mi-coleccion { grid-column: 4; }
+}
+
+/* ---- Página de intercambios ---- */
+.bloque-intercambio { margin: 22px 0; }
+.bloque-intercambio h2 { margin: 0 0 8px; font-family: var(--fuente-titulos); }
+.fila-publicar { display: grid; gap: 10px; }
+.fila-publicar select, .fila-publicar input, .acciones-intercambio select {
+  min-height: 44px; padding: 0 10px; border: 2px solid var(--color-mostaza-oscuro);
+  border-radius: var(--radio-borde-chico); background: var(--color-blanco);
+  font-family: var(--fuente-texto); color: var(--color-texto);
+}
+.lista-intercambios { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.tarjeta-intercambio {
+  display: grid; grid-template-columns: 72px 1fr; gap: 12px; padding: 12px;
+  background: var(--color-papel); border: 2px solid var(--color-mostaza);
+  border-radius: var(--radio-borde); box-shadow: var(--sombra-tarjeta);
+}
+.tarjeta-intercambio img { width: 72px; height: 72px; object-fit: contain; border-radius: 50%; background: var(--color-blanco); }
+.tarjeta-intercambio strong { display: block; }
+.tarjeta-intercambio .detalle { display: block; color: var(--color-texto-suave); font-size: 0.9rem; }
+.acciones-intercambio { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+.propuesta-recibida { padding: 8px 0; border-top: 1px dashed var(--color-mostaza); }
+.etiqueta-estado { font-weight: 700; color: var(--color-verde-menta-oscuro); }
+
+
+/* ---- Selector de objetos con imágenes (¿Qué buscas?) ---- */
+.campo-busco { position: relative; display: grid; gap: 8px; }
+.panel-catalogo {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px;
+  grid-auto-rows: max-content; align-content: start;
+  max-height: 280px; overflow-y: auto; padding: 10px;
+  background: var(--color-papel); border: 2px solid var(--color-mostaza);
+  border-radius: var(--radio-borde); box-shadow: var(--sombra-tarjeta);
+}
+.panel-catalogo.oculto, .busco-elegido.oculto { display: none; }
+.panel-catalogo .texto-ayuda { grid-column: 1 / -1; margin: 0; }
+.opcion-catalogo {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 0; padding: 6px;
+  border: 2px solid transparent; border-radius: var(--radio-borde-chico);
+  background: var(--color-blanco); color: var(--color-texto); font-size: 0.78rem; font-weight: 600;
+  line-height: 1.15; cursor: pointer;
+}
+.opcion-catalogo:hover, .opcion-catalogo:focus-visible { border-color: var(--color-verde-menta-oscuro); }
+.opcion-catalogo img { width: 64px; height: 64px; flex-shrink: 0; object-fit: contain; border-radius: 50%; }
+.opcion-catalogo span { display: block; max-width: 100%; overflow-wrap: anywhere; text-align: center; }
+.busco-elegido { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+.busco-elegido img { width: 44px; height: 44px; object-fit: contain; border-radius: 50%; background: var(--color-blanco); }
+.tarjeta-intercambio .linea-busca { display: flex; align-items: center; gap: 6px; }
+.tarjeta-intercambio img.mini-busca { width: 28px; height: 28px; }
+
+/* =================================================================
+   13) EFECTO 3D EN EL DETALLE DE COLECCIONABLES (perfil)
+   Para quitarlo, basta con borrar desde este comentario hacia abajo.
+   ================================================================= */
+.escena-3d {
+  width: min(100%, 300px);
+  margin: 0 auto;
+  padding: 10px;
+  perspective: 900px;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.tarjeta-3d {
+  position: relative;
+  will-change: transform;
+  /* La sombra sigue la silueta de la imagen (si es redonda, la sombra es redonda) */
+  filter: drop-shadow(var(--sombra-x, 0px) var(--sombra-y, 10px) 12px rgba(59, 46, 32, 0.4));
+}
+
+.detalle-articulo .tarjeta-3d img {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border-radius: 0;
+}
+
+/* Cuando nadie la toca, se mece suavemente para invitar a probarla */
+.tarjeta-3d-reposo {
+  animation: tarjeta-3d-mecer 5s ease-in-out infinite;
+}
+
+@keyframes tarjeta-3d-mecer {
+  0%, 100% { transform: rotateX(3deg) rotateY(-7deg); }
+  50% { transform: rotateX(-3deg) rotateY(7deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tarjeta-3d-reposo { animation: none; }
+}
+
+/* Botón circular "Intercambio" que muestra/oculta el formulario de publicar */
+.boton-circular {
+  display: block; width: 120px; height: 120px; min-height: 0; padding: 0;
+  margin: 4px 0 14px; border-radius: 50%; font-size: 1rem; line-height: 1.1;
+}
+#form-intercambio, #panel-mercado { display: grid; gap: 10px; }
+#form-intercambio.oculto, #panel-mercado.oculto { display: none !important; }
+.fila-botones-circulares { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+#panel-mercado h3 { margin-top: 8px; }
+
+/* =================================================================
+   ADMINISTRADOR DE ASSETS (index.html, solo admin)
+   ================================================================= */
+#info-assets {
+  max-width: 760px; margin: 18px auto 0; padding: 16px; text-align: left;
+  background-color: var(--color-papel); border: 2px dashed var(--color-verde-menta-oscuro);
+  border-radius: var(--radio-borde-chico); color: var(--color-texto);
+}
+#info-assets h2 { font-family: var(--fuente-titulos); color: var(--color-rojo-cereza); font-size: 1.1rem; margin-bottom: 8px; }
+#info-assets h3 { font-family: var(--fuente-titulos); font-size: 1rem; margin: 16px 0 8px; }
+#info-assets > p { margin-bottom: 10px; }
+.assets-form { display: grid; gap: 6px; }
+.assets-form label { font-weight: 600; font-size: 0.9rem; }
+#info-assets input[type="text"], #info-assets input[type="search"], #info-assets select {
+  min-height: 44px; padding: 0 10px; width: 100%;
+  border: 2px solid var(--color-mostaza-oscuro); border-radius: var(--radio-borde-chico);
+  background: var(--color-blanco); font-family: var(--fuente-texto); color: var(--color-texto);
+}
+.assets-filtros { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.assets-grupo { margin-bottom: 14px; }
+.assets-grupo h4 { margin: 0 0 8px; font-size: 0.95rem; color: var(--color-texto-suave); }
+.assets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.asset-card {
+  display: grid; gap: 6px; align-content: start; padding: 8px;
+  background: var(--color-blanco); border: 2px solid var(--color-mostaza);
+  border-radius: var(--radio-borde-chico);
+}
+.asset-card img {
+  width: 100%; height: 110px; object-fit: contain; border-radius: 6px;
+  background: repeating-conic-gradient(#eee6d2 0% 25%, #fff8e7 0% 50%) 50% / 16px 16px;
+}
+.asset-card strong { font-size: 0.85rem; line-height: 1.2; overflow-wrap: anywhere; }
+.asset-acciones { display: flex; flex-wrap: wrap; gap: 6px; }
+.asset-acciones button, .asset-card .boton-secundario, .asset-card .boton-comprar { min-height: 34px; padding: 0 10px; font-size: 0.78rem; }
+
+/* ---- Botón "Usuario root" (esquina izquierda del encabezado, solo admin) ---- */
+header #link-root {
+  position: absolute; top: 8px; left: 12px; z-index: 2;
+  display: inline-flex; align-items: center; min-height: 0;
+  padding: 4px 12px;
+  border: 1px solid #2A1F14; border-radius: 999px;
+  background-image: linear-gradient(to bottom, #8A6B47 0%, #5C4529 48%, #3B2E20 52%, #4E3B24 100%);
+  color: #FFFFFF; font-size: 0.75rem; font-weight: 700; text-decoration: none;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.45);
+  box-shadow: var(--brillo-superior), 0 3px 0 rgba(59, 46, 32, 0.35), 0 5px 8px rgba(59, 46, 32, 0.25);
+}
+header #link-root.oculto { display: none; }
+header #link-root:hover { filter: brightness(1.12); }
+header:has(#link-root:not(.oculto)) { padding-top: 42px; }
+
+@media (min-width: 1000px) {
+  header #link-root { top: 50%; left: 24px; transform: translateY(-50%); font-size: 0.9rem; padding: 8px 18px; }
+  header #link-root:hover { transform: translateY(-50%) scale(1.04); }
+  header:has(#link-root:not(.oculto)) { padding-top: 20px; padding-left: 190px; }
+}
+
+/* ---- Página "Usuario root" ---- */
+.herramientas-root { display: grid; gap: 10px; margin: 14px 0; }
+.herramientas-root a {
+  display: block; padding: 12px 14px; text-decoration: none; font-weight: 700;
+  color: var(--color-texto); background: var(--color-papel);
+  border: 2px solid var(--color-mostaza); border-radius: var(--radio-borde-chico);
+}
+.herramientas-root a span { display: block; font-weight: 400; font-size: 0.85rem; color: var(--color-texto-suave); }
+.herramientas-root a:hover { border-color: var(--color-rojo-cereza); }
+
+.assets-detalles { margin-bottom: 10px; }
+.assets-detalles > summary { cursor: pointer; font-weight: 700; padding: 8px 0; }
+.assets-detalles > .assets-grid { margin-top: 6px; }

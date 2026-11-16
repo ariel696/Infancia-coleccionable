@@ -25,6 +25,7 @@ const inputFotoPerfil = document.getElementById("input-foto-perfil");
 const estadoFotoPerfil = document.getElementById("estado-foto-perfil");
 const botonCopiarPerfil = document.getElementById("btn-copiar-perfil");
 const linkInventarioPrivado = document.getElementById("link-inventario-privado");
+const botonAjustes = document.getElementById("btn-ajustes");
 const uidPerfil = new URLSearchParams(window.location.search).get("u");
 
 function avatarPredeterminado(nombre) {
@@ -56,13 +57,15 @@ function crearBotonReverso(imagen, articulo, imagenFrontal) {
 
   let mostrandoReverso = false;
   let girando = false;
+  let urlFrontal = imagenFrontal;
+  let urlTrasera = articulo.imagenTrasera;
   const boton = document.createElement("button");
   boton.type = "button";
   boton.className = "boton-reverso";
   boton.textContent = "Ver reverso";
 
   function aplicarCara() {
-    imagen.src = mostrandoReverso ? articulo.imagenTrasera : imagenFrontal;
+    imagen.src = mostrandoReverso ? urlTrasera : urlFrontal;
     boton.textContent = mostrandoReverso ? "Ver frente" : "Ver reverso";
   }
 
@@ -129,7 +132,158 @@ function crearBotonReverso(imagen, articulo, imagenFrontal) {
     }
   });
 
+  // Permite cambiar las imágenes (por ejemplo, por versiones sin fondo).
+  boton.cambiarImagenes = (frontal, trasera) => {
+    if (frontal) urlFrontal = frontal;
+    if (trasera) urlTrasera = trasera;
+    aplicarCara();
+  };
+
   return boton;
+}
+
+// Quita el fondo liso (blanco, crema, etc.) que rodea a un coleccionable para
+// que "flote" solo la figura. Parte desde los bordes de la imagen y borra los
+// píxeles parecidos al color del fondo hasta toparse con la figura.
+// Si la imagen ya es transparente, no tiene un fondo liso o el navegador no
+// deja leerla, devuelve la imagen original sin tocarla.
+function quitarFondoImagen(url) {
+  return new Promise((resolve) => {
+    if (!url) { resolve(url); return; }
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onerror = () => resolve(url);
+    img.onload = () => {
+      try {
+        const MAX = 640;
+        const escala = Math.min(1, MAX / Math.max(img.naturalWidth, img.naturalHeight));
+        const w = Math.max(1, Math.round(img.naturalWidth * escala));
+        const h = Math.max(1, Math.round(img.naturalHeight * escala));
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        ctx.drawImage(img, 0, 0, w, h);
+        const imagenData = ctx.getImageData(0, 0, w, h);
+        const d = imagenData.data;
+
+        // Color del fondo: las 4 esquinas deben ser opacas y casi iguales.
+        const esquinas = [0, (w - 1), (h - 1) * w, (h - 1) * w + (w - 1)].map((p) => p * 4);
+        if (esquinas.some((i) => d[i + 3] < 200)) { resolve(url); return; }
+        const fondo = [0, 1, 2].map((c) => Math.round(esquinas.reduce((s, i) => s + d[i + c], 0) / 4));
+        const distancia = (i) => Math.max(Math.abs(d[i] - fondo[0]), Math.abs(d[i + 1] - fondo[1]), Math.abs(d[i + 2] - fondo[2]));
+        if (esquinas.some((i) => distancia(i) > 24)) { resolve(url); return; }
+
+        const TOLERANCIA = 38;
+        const SUAVIZADO = 90;
+        const borrado = new Uint8Array(w * h);
+        const cola = new Int32Array(w * h);
+        let ini = 0, fin = 0;
+        const meter = (p) => {
+          if (borrado[p] || distancia(p * 4) > TOLERANCIA) return;
+          borrado[p] = 1;
+          cola[fin++] = p;
+        };
+        for (let x = 0; x < w; x++) { meter(x); meter((h - 1) * w + x); }
+        for (let y = 0; y < h; y++) { meter(y * w); meter(y * w + w - 1); }
+        while (ini < fin) {
+          const p = cola[ini++];
+          const x = p % w;
+          if (x > 0) meter(p - 1);
+          if (x < w - 1) meter(p + 1);
+          if (p >= w) meter(p - w);
+          if (p < w * (h - 1)) meter(p + w);
+        }
+        if (fin < w * h * 0.02) { resolve(url); return; } // casi no había fondo
+
+        // Borde suave: los píxeles junto al fondo borrado se vuelven semitransparentes
+        // según qué tan parecidos al fondo sean (evita el "halo" blanco).
+        for (let p = 0; p < w * h; p++) {
+          if (!borrado[p]) continue;
+          const x = p % w;
+          const vecinos = [];
+          if (x > 0) vecinos.push(p - 1);
+          if (x < w - 1) vecinos.push(p + 1);
+          if (p >= w) vecinos.push(p - w);
+          if (p < w * (h - 1)) vecinos.push(p + w);
+          vecinos.forEach((v) => {
+            if (borrado[v]) return;
+            const dist = distancia(v * 4);
+            if (dist < SUAVIZADO) {
+              const alfa = Math.round(255 * (dist - TOLERANCIA) / (SUAVIZADO - TOLERANCIA));
+              if (alfa < d[v * 4 + 3]) d[v * 4 + 3] = Math.max(0, alfa);
+            }
+          });
+        }
+        for (let p = 0; p < w * h; p++) if (borrado[p]) d[p * 4 + 3] = 0;
+
+        ctx.putImageData(imagenData, 0, 0);
+        resolve(canvas.toDataURL("image/png"));
+      } catch (error) {
+        resolve(url);
+      }
+    };
+    img.src = url;
+  });
+}
+
+// Efecto 3D: envuelve la imagen en una "tarjeta" que se inclina siguiendo
+// el dedo o el cursor (sin brillos ni colores añadidos: la imagen se ve tal cual es).
+// Devuelve el contenedor que hay que poner en lugar de la imagen.
+function crearVisor3D(imagen) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return imagen;
+
+  const MAX_INCLINACION = 16; // grados
+  const escena = document.createElement("div");
+  escena.className = "escena-3d";
+  const tarjeta = document.createElement("div");
+  tarjeta.className = "tarjeta-3d tarjeta-3d-reposo";
+  tarjeta.appendChild(imagen);
+  escena.appendChild(tarjeta);
+
+  let encima = false;
+  let temporizador = null;
+
+  function inclinar(evento) {
+    const caja = escena.getBoundingClientRect();
+    const x = Math.min(Math.max((evento.clientX - caja.left) / caja.width, 0), 1);
+    const y = Math.min(Math.max((evento.clientY - caja.top) / caja.height, 0), 1);
+    const rotX = (0.5 - y) * 2 * MAX_INCLINACION;
+    const rotY = (x - 0.5) * 2 * MAX_INCLINACION;
+
+    encima = true;
+    clearTimeout(temporizador);
+    tarjeta.classList.remove("tarjeta-3d-reposo");
+    tarjeta.style.transition = "transform 80ms linear, filter 80ms linear";
+    tarjeta.style.transform = "rotateX(" + rotX + "deg) rotateY(" + rotY + "deg) scale(1.05)";
+    tarjeta.style.setProperty("--sombra-x", (-rotY * 1.4) + "px");
+    tarjeta.style.setProperty("--sombra-y", (rotX * 1.4 + 14) + "px");
+  }
+
+  function soltar() {
+    encima = false;
+    tarjeta.style.transition = "transform 500ms ease-out, filter 500ms ease-out";
+    tarjeta.style.transform = "";
+    tarjeta.style.setProperty("--sombra-x", "0px");
+    tarjeta.style.setProperty("--sombra-y", "14px");
+    // Pasado un momento sin tocar, vuelve a mecerse suavemente.
+    temporizador = setTimeout(() => {
+      if (!encima) {
+        tarjeta.style.transition = "";
+        tarjeta.classList.add("tarjeta-3d-reposo");
+      }
+    }, 600);
+  }
+
+  escena.addEventListener("pointermove", inclinar);
+  escena.addEventListener("pointerdown", inclinar);
+  escena.addEventListener("pointerleave", soltar);
+  escena.addEventListener("pointerup", (evento) => {
+    if (evento.pointerType !== "mouse") soltar();
+  });
+  escena.addEventListener("pointercancel", soltar);
+
+  return escena;
 }
 
 function mostrarDetalleArticulo(articulo, categoria) {
@@ -163,9 +317,122 @@ function mostrarDetalleArticulo(articulo, categoria) {
   cerrar.addEventListener("click", () => modal.remove());
 
   const botonReverso = crearBotonReverso(imagen, articulo, imagen.src);
-  contenido.append(imagen, tipo, nombre, origen);
+  contenido.append(crearVisor3D(imagen), tipo, nombre, origen);
   if (botonReverso) contenido.appendChild(botonReverso);
   contenido.appendChild(cerrar);
+  modal.appendChild(contenido);
+  modal.addEventListener("click", (evento) => {
+    if (evento.target === modal) modal.remove();
+  });
+  document.body.appendChild(modal);
+  cerrar.focus();
+
+  // Mientras se quita el fondo, la imagen espera oculta para que no se vea el cuadro.
+  imagen.style.opacity = "0";
+  imagen.style.transition = "opacity 200ms ease-out";
+  const revelar = () => { imagen.style.opacity = "1"; };
+  setTimeout(revelar, 3000);
+  Promise.all([
+    quitarFondoImagen(obtenerImagenArticulo(articulo)),
+    quitarFondoImagen(articulo.imagenTrasera)
+  ]).then(([frontal, trasera]) => {
+    if (document.body.contains(modal)) {
+      if (botonReverso) botonReverso.cambiarImagenes(frontal, trasera);
+      else imagen.src = frontal;
+    }
+    revelar();
+  });
+}
+
+// ---------------------------------------------------------------
+// Ajustes de la cuenta (engranaje). Solo lo ve el dueño del perfil.
+// Los datos salen de la sesión de Firebase Auth del propio usuario
+// y NO se guardan en el perfil público, así nadie más los ve.
+// ---------------------------------------------------------------
+const NOMBRES_PROVEEDOR = {
+  "google.com": "Google",
+  "password": "Correo y contraseña",
+  "phone": "Número de teléfono",
+  "facebook.com": "Facebook",
+  "apple.com": "Apple",
+  "twitter.com": "X (Twitter)",
+  "github.com": "GitHub"
+};
+
+function formatearFechaCuenta(texto) {
+  if (!texto) return "No disponible";
+  const fecha = new Date(texto);
+  if (isNaN(fecha.getTime())) return "No disponible";
+  return fecha.toLocaleString("es-CL", { dateStyle: "long", timeStyle: "short" });
+}
+
+function filaAjuste(titulo, valor) {
+  const fila = document.createElement("div");
+  fila.className = "fila-ajuste";
+  const dt = document.createElement("dt");
+  dt.textContent = titulo;
+  const dd = document.createElement("dd");
+  dd.textContent = valor;
+  fila.append(dt, dd);
+  return fila;
+}
+
+function mostrarAjustes(usuario) {
+  const modalAnterior = document.querySelector(".modal-detalle-articulo");
+  if (modalAnterior) modalAnterior.remove();
+
+  const proveedores = usuario.providerData || [];
+  const telefono = usuario.phoneNumber
+    || (proveedores.find((p) => p && p.phoneNumber) || {}).phoneNumber
+    || "No registrado";
+  const correo = usuario.email
+    || (proveedores.find((p) => p && p.email) || {}).email
+    || "No registrado";
+  const metodos = proveedores
+    .map((p) => NOMBRES_PROVEEDOR[p.providerId] || p.providerId)
+    .join(", ") || "No disponible";
+  const metadatos = usuario.metadata || {};
+
+  const modal = document.createElement("div");
+  modal.className = "modal-detalle-articulo";
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("aria-modal", "true");
+  modal.setAttribute("aria-labelledby", "titulo-ajustes");
+
+  const contenido = document.createElement("article");
+  contenido.className = "detalle-articulo detalle-ajustes";
+
+  const etiqueta = document.createElement("p");
+  etiqueta.className = "etiqueta-detalle-articulo";
+  etiqueta.textContent = "Solo tú ves esto";
+
+  const titulo = document.createElement("h2");
+  titulo.id = "titulo-ajustes";
+  titulo.textContent = "Mi cuenta";
+
+  const lista = document.createElement("dl");
+  lista.className = "lista-ajustes";
+  lista.append(
+    filaAjuste("Nombre", usuario.displayName || "No registrado"),
+    filaAjuste("Correo (Gmail)", correo + (usuario.email ? (usuario.emailVerified ? " ✓ verificado" : " (sin verificar)") : "")),
+    filaAjuste("Teléfono asociado", telefono),
+    filaAjuste("Se registró con", metodos),
+    filaAjuste("Cuenta creada", formatearFechaCuenta(metadatos.creationTime)),
+    filaAjuste("Último ingreso", formatearFechaCuenta(metadatos.lastSignInTime)),
+    filaAjuste("ID de usuario", usuario.uid)
+  );
+
+  const nota = document.createElement("p");
+  nota.className = "texto-ayuda";
+  nota.textContent = "Estos datos son privados y no aparecen en tu perfil público.";
+
+  const cerrar = document.createElement("button");
+  cerrar.className = "boton-comprar";
+  cerrar.type = "button";
+  cerrar.textContent = "Cerrar";
+  cerrar.addEventListener("click", () => modal.remove());
+
+  contenido.append(etiqueta, titulo, lista, nota, cerrar);
   modal.appendChild(contenido);
   modal.addEventListener("click", (evento) => {
     if (evento.target === modal) modal.remove();
@@ -255,6 +522,8 @@ function cargarPerfil(uid, usuarioActual) {
       controlesPerfil.classList.remove("oculto");
       linkInventarioPrivado.href = "coleccion.html?uid=" + encodeURIComponent(uid);
       linkInventarioPrivado.classList.remove("oculto");
+      botonAjustes.classList.remove("oculto");
+      botonAjustes.onclick = () => mostrarAjustes(usuarioActual);
     }
   }).catch((error) => {
     console.error("Error al cargar perfil:", error.message);

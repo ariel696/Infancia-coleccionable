@@ -791,8 +791,9 @@ function agregarFilaOpcion(opcionExistente = {}) {
 
   const inputPrecio = document.createElement("input");
   inputPrecio.type = "number";
-  inputPrecio.placeholder = "Precio en monedas";
-  inputPrecio.min = "1";
+  inputPrecio.placeholder = "Precio en pesos (múltiplo de 50)";
+  inputPrecio.min = "50";
+  inputPrecio.step = "50";
   inputPrecio.className = "input-precio-opcion";
   inputPrecio.value = opcionExistente.precio || "";
 
@@ -947,7 +948,7 @@ function leerOpcionesDelFormulario() {
 
     // Si el usuario dejó una fila vacía (sin nombre), la ignoramos
     // en vez de guardar una opción rota.
-    if (nombre === "" || !precioTexto || precio <= 0) {
+    if (nombre === "" || !precioTexto || precio <= 0 || precio % 50 !== 0) {
       if (nombre !== "" || precioTexto || imagen !== "") {
         filaIncompleta = true;
       }
@@ -1025,7 +1026,7 @@ formNuevoProducto.addEventListener("submit", (evento) => {
   const opciones = leerOpcionesDelFormulario();
 
   if (opciones === null) {
-    alert("Completá cada producto con nombre y precio, y revisá que el número de cada premio sea un entero mayor a 0.");
+    alert("Completá cada producto con nombre y precio, y revisá que el número de cada premio sea un entero mayor a 0. El precio debe ser en pesos y múltiplo de 50 (monedas de 50, 100 y 500 y billete de 1.000).");
     return;
   }
 

@@ -92,6 +92,8 @@ const botonDineroDiario = document.getElementById("btn-dinero-diario") || docume
 const botonRegaloDiario = document.getElementById("btn-regalo-diario") || document.createElement("button");
 const estadoDineroDiario = document.getElementById("estado-dinero-diario") || document.createElement("p");
 const linkMiColeccion = document.getElementById("link-mi-coleccion");
+const linkIntercambios = document.getElementById("link-intercambios");
+const linkRoot = document.getElementById("link-root");
 const botonCerrarSesion = document.getElementById("btn-cerrar-sesion");
 const infoRoot = document.getElementById("info-root");
 const panelRecargaRoot = document.getElementById("panel-recarga-root");
@@ -599,6 +601,7 @@ auth.onAuthStateChanged((usuario) => {
     botonDineroDiario.classList.remove("oculto");
     botonRegaloDiario.classList.remove("oculto");
     linkMiColeccion.classList.remove("oculto");
+    linkIntercambios.classList.remove("oculto");
     botonCerrarSesion.classList.remove("oculto");
 
     // NUEVO: acá comparamos el email de quien inició sesión contra
@@ -610,9 +613,11 @@ auth.onAuthStateChanged((usuario) => {
     if (usuario.email === EMAIL_ADMIN) {
       infoRoot.classList.remove("oculto");
       panelRecargaRoot.classList.remove("oculto");
+      if (linkRoot) linkRoot.classList.remove("oculto");
     } else {
       infoRoot.classList.add("oculto");
       panelRecargaRoot.classList.add("oculto");
+      if (linkRoot) linkRoot.classList.add("oculto");
     }
 
     // NUEVO: ahora que sabemos quién es, vamos a buscar (o crear) su
@@ -629,12 +634,14 @@ auth.onAuthStateChanged((usuario) => {
     botonDineroDiario.classList.add("oculto");
     botonRegaloDiario.classList.add("oculto");
     linkMiColeccion.classList.add("oculto");
+    linkIntercambios.classList.add("oculto");
     botonCerrarSesion.classList.add("oculto");
 
     // NUEVO: tampoco tiene sentido mostrar el link de admin sin
     // sesión activa.
     infoRoot.classList.add("oculto");
     panelRecargaRoot.classList.add("oculto");
+    if (linkRoot) linkRoot.classList.add("oculto");
 
     // NUEVO: si nadie está logeado, no tiene sentido mostrar monedas
     // de nadie, así que limpiamos ese párrafo también.

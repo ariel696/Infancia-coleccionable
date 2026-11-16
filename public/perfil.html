@@ -8,13 +8,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260925-6">
+    <link rel="stylesheet" href="css/style.css?v=20260925-14">
 </head>
 <body>
     <header>
         <h1 id="titulo-perfil">Perfil</h1>
     </header>
     <main>
+        <a href="index.html" class="link-volver">&larr; Volver al inicio</a>
+
         <p id="estado-perfil" class="texto-ayuda">Cargando perfil...</p>
 
         <section id="cabecera-perfil" class="cabecera-perfil oculto" aria-labelledby="nombre-perfil">
@@ -24,6 +26,7 @@
                 <p id="descripcion-perfil">Muro de coleccionables y objetos</p>
                 <a id="link-inventario-privado" class="link-perfil oculto" href="coleccion.html">Ver mi inventario</a>
             </div>
+            <button id="btn-ajustes" class="boton-ajustes oculto" type="button" aria-label="Ajustes y datos de mi cuenta" title="Ajustes y datos de mi cuenta">&#9881;&#xFE0E;</button>
         </section>
 
         <section id="controles-perfil" class="controles-perfil oculto" aria-label="Opciones de mi perfil">
@@ -49,6 +52,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-    <script src="js/perfil.js?v=20260925-2"></script>
+    <script src="js/perfil.js?v=20260925-6"></script>
 </body>
 </html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intercambios - Infancia coleccionable</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=20260925-14">
+</head>
+<body>
+    <header>
+        <h1>Intercambios</h1>
+    </header>
+    <main>
+        <a href="index.html" class="link-volver">&larr; Volver al inicio</a>
+        <p id="estado-intercambios" class="texto-ayuda">Cargando intercambios...</p>
+
+        <section class="bloque-intercambio" aria-labelledby="t-publicar">
+            <div class="fila-botones-circulares">
+                <button id="btn-abrir-intercambio" class="boton-comprar boton-circular" type="button" aria-expanded="false" aria-controls="form-intercambio">Intercambio</button>
+                <button id="btn-abrir-mercado" class="boton-comprar boton-circular" type="button" aria-expanded="false" aria-controls="panel-mercado">Compra y venta</button>
+            </div>
+            <div id="form-intercambio" class="oculto">
+            <h2 id="t-publicar">Publicar un intercambio</h2>
+            <p class="texto-ayuda">Elige un coleccionable tuyo y cuenta qué buscas a cambio. Mientras esté publicado, queda guardado en la oferta.</p>
+            <div class="fila-publicar">
+                <div class="campo-busco" id="campo-ofrezco">
+                    <input id="input-ofrezco" type="text" maxlength="80" autocomplete="off" placeholder="¿Qué ofreces? Ej: Tazo de Pikachu">
+                    <div id="panel-ofrezco" class="panel-catalogo oculto" aria-label="Tus coleccionables"></div>
+                    <div id="ofrezco-elegido" class="busco-elegido oculto"></div>
+                </div>
+                <div class="campo-busco" id="campo-busco">
+                    <input id="input-busco" type="text" maxlength="80" autocomplete="off" placeholder="¿Qué buscas? Ej: Tazo de Charizard">
+                    <div id="panel-catalogo" class="panel-catalogo oculto" aria-label="Objetos que existen hasta ahora"></div>
+                    <div id="busco-elegido" class="busco-elegido oculto"></div>
+                </div>
+                <button id="btn-publicar" class="boton-comprar" type="button">Publicar oferta</button>
+            </div>
+            </div>
+
+            <div id="panel-mercado" class="oculto">
+                <h2>Compra y venta</h2>
+                <p id="mis-monedas" class="texto-ayuda"></p>
+
+                <h3>Vender un coleccionable</h3>
+                <div class="fila-publicar">
+                    <div class="campo-busco" id="campo-vendo">
+                        <input id="input-vendo" type="text" maxlength="80" autocomplete="off" placeholder="¿Qué vendes? Elige uno de tus coleccionables">
+                        <div id="panel-vendo" class="panel-catalogo oculto" aria-label="Tus coleccionables"></div>
+                        <div id="vendo-elegido" class="busco-elegido oculto"></div>
+                    </div>
+                    <input id="input-precio" type="number" min="1" max="1000000" step="1" inputmode="numeric" placeholder="Precio en monedas">
+                    <button id="btn-vender" class="boton-comprar" type="button">Poner en venta</button>
+                </div>
+
+                <h3>En venta ahora</h3>
+                <ul id="lista-mercado" class="lista-intercambios"></ul>
+
+                <h3>Mis ventas</h3>
+                <ul id="lista-mis-ventas" class="lista-intercambios"></ul>
+            </div>
+        </section>
+
+        <section class="bloque-intercambio" aria-labelledby="t-ofertas">
+            <h2 id="t-ofertas">Ofertas abiertas de todos</h2>
+            <ul id="lista-ofertas" class="lista-intercambios"></ul>
+        </section>
+
+        <section class="bloque-intercambio">
+            <button id="btn-historial" class="boton-secundario" type="button" aria-expanded="false" aria-controls="panel-historial">Ver historial</button>
+            <div id="panel-historial" class="oculto" aria-labelledby="t-propuestas">
+                <h2 id="t-propuestas">Mis propuestas enviadas</h2>
+                <ul id="lista-propuestas" class="lista-intercambios"></ul>
+            </div>
+        </section>
+
+        <a href="index.html" class="link-volver">&larr; Volver al inicio</a>
+    </main>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="js/intercambios.js?v=20260925-9"></script>
+</body>
+</html>
